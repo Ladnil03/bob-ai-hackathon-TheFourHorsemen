@@ -1,49 +1,68 @@
-# Architecture
+# System Architecture
 
-## System Architecture
-
-[Describe the overall architecture of your system. Replace the Mermaid diagram below with your actual architecture.]
+## Data Flow Diagram
 
 ```mermaid
-graph TD
-    A[User / Browser] -->|HTTP| B[Frontend - React]
-    B -->|REST API| C[Backend - FastAPI]
-    C -->|SDK| D[watsonx.ai]
-    C -->|Query| E[PostgreSQL]
-    C -->|Publish| F[Slack Webhook]
-    D -->|Inference Result| C
+flowchart TD
+    subgraph Raw Data
+        A[wafer_lots.csv]
+        B[process_parameters.csv]
+        C[sensor_data.csv]
+        D[defect_data.csv]
+    end
+
+    A & B & C & D --> E[Data Loader Phase 2a]
+    E --> F[Merged Dataset]
+    F --> G[Feature Engineering Phase 2b]
+    
+    G --> H[Engineered Features DataFrame]
+    
+    H --> I[Anomaly Detection Phase 3a]
+    I --> J[Flag 5 anomalous lots]
+    
+    H --> K[Equipment Analysis Phase 3b]
+    K --> L[Rank equipment by avg yield]
+    
+    H --> M[Sensor Correlation Phase 3c]
+    M --> N[Rank features by failure signal strength]
+    
+    H --> O[Predictive Model Phase 4]
+    O --> P[Random Forest classifier]
+    O --> Q[SHAP explainer]
+    P & Q --> R[Model Output]
+    
+    R --> S[Root Cause Analyzer Phase 5]
+    S --> T[Find similar passing lots]
+    S --> U[Rank probable causes + confidence]
+    
+    R --> V[Batch Risk Scorer Phase 6]
+    V --> W[Compute risk score 0-100%]
+    W --> X[Output LOW / MEDIUM / HIGH risk]
 ```
 
-## Components
+## Key Modules
 
-| Component | Technology | Responsibility |
-|---|---|---|
-| Frontend | [e.g., React 18] | [e.g., Dashboard UI, user interaction] |
-| Backend API | [e.g., FastAPI] | [e.g., Business logic, orchestration] |
-| AI / ML | [e.g., watsonx.ai] | [e.g., Anomaly scoring, classification] |
-| Database | [e.g., PostgreSQL] | [e.g., Storing pipeline events and scores] |
-| Notifications | [e.g., Slack API] | [e.g., Alerting on threshold breaches] |
+| Module | Purpose | LOC |
+|--------|---------|-----|
+| `data_loader.py` | Load & merge 4 CSVs | 192 |
+| `feature_engineering.py` | Sensor aggregation, feature extraction | 195 |
+| `anomaly_detection.py` | Isolation Forest, correlation analysis | 247 |
+| `predictive_model.py` | Random Forest, SHAP, model training | 260 |
+| `root_cause_analyzer.py` | Root cause ranking, explanations | 300 |
+| `app.py` | Pipeline orchestration, batch scoring | 305 |
 
-## Data Flow
+## Data Transformations
 
-[Describe how data moves through your system from input to output.]
+1. **Raw Sensors** (180 rows of 5-min readings)
+   → Aggregate by lot
+   → **10 engineered features** (drift, std, max values)
 
-1. [e.g., Pipeline logs are ingested via a webhook from GitHub Actions]
-2. [e.g., Logs are preprocessed and chunked into 512-token segments]
-3. [e.g., Each chunk is sent to the watsonx.ai inference endpoint]
-4. [e.g., Anomaly scores are stored in PostgreSQL]
-5. [e.g., The React dashboard polls the API every 30 seconds to refresh]
+2. **Defects** (150 defect records)
+   → Count by type per lot
+   → **5 aggregated defect features**
 
-## Security Considerations
+3. **Parameters** (30 recipe rows)
+   → Merge on lot_id
+   → **12 target parameters**
 
-[Note any security decisions relevant to the architecture — even if basic.]
-
-- [e.g., API keys stored in environment variables, never committed to git]
-- [e.g., All API routes require a Bearer token]
-- [e.g., Database credentials rotated via IBM Secrets Manager]
-
-## Scalability Notes
-
-[Optional: how would this scale beyond the hackathon prototype?]
-
-[e.g., "The FastAPI backend is stateless and could be horizontally scaled behind a load balancer. The watsonx.ai calls are the bottleneck and would benefit from request batching."]
+4. **Final Dataset**: 30 rows × 47 features

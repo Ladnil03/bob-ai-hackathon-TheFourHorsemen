@@ -6,7 +6,7 @@ Entry point that wires together every analysis module:
 1. Load & merge data            (Phase 2)
 2. Anomaly detection            (Phase 3a)
 3. Equipment performance        (Phase 3b)
-4. Sensor–failure correlations  (Phase 3c)
+4. Sensor-failure correlations  (Phase 3c)
 5. Predictive model + SHAP      (Phase 4)
 6. Root cause analysis          (Phase 5)
 7. Batch risk scoring           (Phase 6)
@@ -21,6 +21,7 @@ Usage
 """
 
 import sys
+sys.stdout.reconfigure(encoding='utf-8')
 import argparse
 from pathlib import Path
 
