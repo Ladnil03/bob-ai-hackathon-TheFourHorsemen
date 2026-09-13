@@ -2,27 +2,40 @@
 Semiconductor Yield Optimization Analysis Package
 ===================================================
 Modules:
-    data_loader          — Load & merge raw CSV data (Phase 2a)
-    feature_engineering   — Sensor & defect feature extraction (Phase 2b/c)
-    anomaly_detection     — Isolation Forest + equipment analysis (Phase 3)
-    predictive_model      — Random Forest + SHAP explanations (Phase 4)
+    data_loader          — Load SECOM / uploaded CSV data (Phase 2a)
+    feature_engineering   — Generic feature selection (Phase 2b)
+    anomaly_detection     — Isolation Forest + correlations (Phase 3)
+    predictive_model      — Random Forest + SHAP + cross-validation (Phase 4)
     root_cause_analyzer   — Root cause ranking engine (Phase 5)
 """
 
-from analysis.data_loader import build_lot_dataset, load_raw_data
-from analysis.feature_engineering import extract_sensor_features, extract_defect_features
-from analysis.anomaly_detection import detect_sensor_anomalies, analyze_equipment_performance
-from analysis.predictive_model import train_failure_predictor, explain_failures_shap
-from analysis.root_cause_analyzer import rank_root_causes
+from analysis.data_loader import (
+    load_secom_dataset,
+    load_uploaded_csv,
+    preprocess_data,
+    get_feature_columns,
+    get_dataset_summary,
+)
+from analysis.feature_engineering import select_features
+from analysis.anomaly_detection import (
+    detect_anomalies,
+    compute_correlations,
+    analyze_groups,
+)
+from analysis.predictive_model import train_and_evaluate, predict_sample
+from analysis.root_cause_analyzer import analyze_root_causes
 
 __all__ = [
-    "build_lot_dataset",
-    "load_raw_data",
-    "extract_sensor_features",
-    "extract_defect_features",
-    "detect_sensor_anomalies",
-    "analyze_equipment_performance",
-    "train_failure_predictor",
-    "explain_failures_shap",
-    "rank_root_causes",
+    "load_secom_dataset",
+    "load_uploaded_csv",
+    "preprocess_data",
+    "get_feature_columns",
+    "get_dataset_summary",
+    "select_features",
+    "detect_anomalies",
+    "compute_correlations",
+    "analyze_groups",
+    "train_and_evaluate",
+    "predict_sample",
+    "analyze_root_causes",
 ]
