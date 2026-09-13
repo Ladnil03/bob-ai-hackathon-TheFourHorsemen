@@ -1,23 +1,16 @@
 """
-Semiconductor Yield Optimization — Main Application
-=====================================================
-Entry point that wires together every analysis module:
-
-1. Load & merge data            (Phase 2)
-2. Anomaly detection            (Phase 3a)
-3. Equipment performance        (Phase 3b)
-4. Sensor-failure correlations  (Phase 3c)
-5. Predictive model + SHAP      (Phase 4)
-6. Root cause analysis          (Phase 5)
-7. Batch risk scoring           (Phase 6)
+Semiconductor Yield Optimization — CLI Pipeline
+=================================================
+Standalone CLI that runs the full analysis pipeline against the
+UCI SECOM dataset (1,567 wafers × 590 sensors).
 
 Usage
 -----
-    # Full pipeline (all phases)
+    # Full pipeline on real SECOM data (default)
     python src/app.py
 
-    # Score an upcoming batch
-    python src/app.py --predict_batch upcoming_recipe.csv
+    # Quick demo on tiny synthetic wafer_lots (30 samples — NOT for evaluation)
+    python src/app.py --demo
 """
 
 import sys
@@ -33,244 +26,257 @@ _SRC_DIR = Path(__file__).resolve().parent
 if str(_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(_SRC_DIR))
 
-from analysis.data_loader import build_lot_dataset, validate_dataset
-from analysis.anomaly_detection import (
-    detect_sensor_anomalies,
-    print_anomaly_report,
-    analyze_equipment_performance,
-    sensor_failure_correlation,
+from analysis.data_loader import (
+    load_secom_dataset,
+    preprocess_data,
+    get_feature_columns,
+    get_dataset_summary,
 )
-from analysis.predictive_model import (
-    train_failure_predictor,
-    explain_failures_shap,
-    FEATURE_COLS,
-)
-from analysis.root_cause_analyzer import (
-    rank_root_causes,
-    print_root_cause_report,
-)
+from analysis.feature_engineering import select_features
+from analysis.anomaly_detection import detect_anomalies, compute_correlations
+from analysis.predictive_model import train_and_evaluate, predict_sample
+from analysis.root_cause_analyzer import analyze_root_causes
 
 
 # ---------------------------------------------------------------------------
-# Phase 6 — Batch Risk Scoring
+# Pretty-print helpers
 # ---------------------------------------------------------------------------
 
-def score_upcoming_batch(
-    batch_params: dict,
-    model_artifacts: dict,
-    lot_data: pd.DataFrame,
-) -> dict:
-    """Score a planned batch and return a risk assessment.
-
-    Parameters
-    ----------
-    batch_params : dict
-        Planned parameters.  Keys should include recipe targets such as
-        ``target_temp_C``, ``target_pressure_pa``, ``target_power_w``,
-        ``equipment_id``, ``process_recipe``, etc.
-    model_artifacts : dict
-        Output of ``train_failure_predictor``.
-    lot_data : pd.DataFrame
-        Historical lot data (for population statistics).
-
-    Returns
-    -------
-    dict
-        Risk assessment with score, classification, factors, and recs.
-    """
-    model = model_artifacts["model"]
-    scaler = model_artifacts["scaler"]
-    features = model_artifacts["features"]
-
-    # Map recipe targets → approximate sensor features
-    # In production this would come from a physics model; here we use
-    # the historical mean of matching recipes as a proxy.
-    recipe = batch_params.get("process_recipe", "")
-    equipment = batch_params.get("equipment_id", "UNKNOWN")
-
-    # Find historical lots with similar recipe
-    similar = lot_data[lot_data["process_recipe"].str.contains(
-        recipe.split("_V")[0] if "_V" in recipe else recipe, na=False
-    )]
-    if similar.empty:
-        similar = lot_data  # fallback to all lots
-
-    # Build a feature vector from planned params + historical means
-    feature_vector = {}
-    for feat in features:
-        if feat in batch_params:
-            feature_vector[feat] = batch_params[feat]
-        elif feat in similar.columns:
-            feature_vector[feat] = similar[feat].mean()
-        else:
-            feature_vector[feat] = 0.0
-
-    # Override with planned parameters where applicable
-    if "target_pressure_pa" in batch_params and "pressure_drift" in features:
-        # Low drift expected for a well-tuned recipe
-        feature_vector["pressure_drift"] = max(0.5, similar["pressure_drift"].quantile(0.25))
-    if "target_temp_C" in batch_params and "temp_drift" in features:
-        feature_vector["temp_drift"] = max(1.0, similar["temp_drift"].quantile(0.25))
-
-    # Build DataFrame for prediction
-    X_batch = pd.DataFrame([feature_vector])[features]
-    X_scaled = scaler.transform(X_batch.values)
-
-    # Predict
-    proba = model.predict_proba(X_scaled)[0][1]
-    risk_pct = round(proba * 100, 1)
-
-    if risk_pct < 25:
-        classification = "LOW"
-        symbol = "✅"
-        status = "APPROVED TO RUN"
-        rec = "Standard monitoring (no special precautions)"
-    elif risk_pct < 50:
-        classification = "MEDIUM"
-        symbol = "⚠️"
-        status = "CONDITIONAL APPROVAL"
-        rec = "Enhanced monitoring — check pressure & temp every 2 min"
-    else:
-        classification = "HIGH"
-        symbol = "🛑"
-        status = "HOLD — Review required"
-        rec = "Do NOT run until root cause from prior failures is resolved"
-
-    # Equipment history
-    eq_lots = lot_data[lot_data["equipment_id"] == equipment]
-    eq_yield = eq_lots["yield_percent"].mean() if len(eq_lots) > 0 else None
-    eq_failures = eq_lots["failure_flag"].sum() if len(eq_lots) > 0 else None
-
-    # Find similar good lots
-    passing = lot_data[lot_data["failure_flag"] == 0]
-    best_matches = passing.nlargest(2, "yield_percent")["lot_id"].tolist()
-
-    # Risk factors
-    pop_means = lot_data[features].mean()
-    pop_stds = lot_data[features].std().replace(0, 1)
-    z_scores = ((X_batch.iloc[0] - pop_means) / pop_stds).abs().sort_values(ascending=False)
-    risk_factors = []
-    for feat, z in z_scores.head(3).items():
-        if z > 0.5:
-            risk_factors.append(f"{feat} is {z:.1f}σ from historical mean")
-
-    return {
-        "risk_score": risk_pct,
-        "classification": classification,
-        "symbol": symbol,
-        "status": status,
-        "recommendation": rec,
-        "equipment": equipment,
-        "recipe": recipe,
-        "eq_avg_yield": round(eq_yield, 1) if eq_yield else "N/A",
-        "eq_failures": int(eq_failures) if eq_failures is not None else "N/A",
-        "risk_factors": risk_factors,
-        "similar_good_lots": best_matches,
-        "planned_features": {k: round(v, 3) for k, v in feature_vector.items()},
-    }
+def _header(title: str):
+    """Print a section header."""
+    print(f"\n{'=' * 70}")
+    print(title)
+    print('=' * 70)
 
 
-def print_batch_risk_report(assessment: dict, batch_params: dict):
-    """Pretty-print a batch risk assessment."""
-    print("\n" + "=" * 70)
-    print("BATCH RISK ASSESSMENT")
-    print("=" * 70)
-    print(f"Equipment : {assessment['equipment']}")
-    print(f"Recipe    : {assessment['recipe']}")
-
-    planned = batch_params
-    for key in ["target_temp_C", "target_pressure_pa", "target_power_w"]:
-        if key in planned:
-            print(f"  {key}: {planned[key]}")
-
-    print(f"\nRISK SCORE: {assessment['risk_score']}%  "
-          f"({assessment['classification']} RISK) {assessment['symbol']}")
-    print(f"\nStatus          : {assessment['status']}")
-    print(f"Recommendation  : {assessment['recommendation']}")
-
-    if assessment["risk_factors"]:
-        print(f"\nRisk factors:")
-        for rf in assessment["risk_factors"]:
-            print(f"  ⚠️  {rf}")
-    else:
-        print("\n  ✓ All parameters within normal range")
-
-    print(f"\nEquipment history:")
-    print(f"  Avg yield  : {assessment['eq_avg_yield']}%")
-    print(f"  Failures   : {assessment['eq_failures']}")
-
-    if assessment["similar_good_lots"]:
-        print(f"\nSimilar successful lots: {', '.join(assessment['similar_good_lots'])}")
-
-    print("=" * 70)
+def _phase(label: str):
+    """Print a phase marker."""
+    print(f"\n▶ {label}")
 
 
 # ---------------------------------------------------------------------------
-# Full pipeline
+# Full SECOM pipeline
 # ---------------------------------------------------------------------------
 
-def run_full_pipeline():
-    """Execute every analysis phase end-to-end."""
+def run_secom_pipeline(top_k: int = 30):
+    """Execute every analysis phase on the real SECOM dataset."""
+
     print("╔" + "═" * 68 + "╗")
     print("║   SEMICONDUCTOR YIELD OPTIMIZATION PIPELINE                        ║")
-    print("║   Phases 2–6: Data → Features → Anomalies → Prediction → Action   ║")
+    print("║   Real SECOM Dataset · Stratified 5-Fold CV · SMOTE               ║")
     print("╚" + "═" * 68 + "╝")
 
-    # ── Phase 2: Load & merge ──────────────────────────────────────────
-    print("\n▶ PHASE 2: Data Pipeline & Feature Engineering")
+    # ── Phase 2a: Load & preprocess ─────────────────────────────────────
+    _phase("PHASE 2a: Load & Preprocess SECOM Dataset")
+    df = load_secom_dataset()
+    raw_shape = df.shape
+    print(f"  Raw shape: {raw_shape[0]} samples × {raw_shape[1]} columns")
+
+    df = preprocess_data(df)
+    summary = get_dataset_summary(df)
+    print(f"  Cleaned shape: {df.shape[0]} samples × {df.shape[1]} columns")
+    print(f"  Pass / Fail: {summary['pass_count']} / {summary['fail_count']}")
+    print(f"  Failure rate: {summary['failure_rate']}%")
+    print(f"  Features remaining: {summary['total_features']}")
+
+    # ── Phase 2b: Feature selection ─────────────────────────────────────
+    _phase(f"PHASE 2b: Feature Selection (top {top_k})")
+    all_features = get_feature_columns(df)
+    fs = select_features(df, all_features, top_k=top_k)
+    selected = fs["selected_features"]
+
+    print(f"  Original features : {fs['total_original']}")
+    print(f"  Dropped low-var   : {fs['dropped_low_variance']}")
+    print(f"  Dropped corr>0.95 : {fs['dropped_high_correlation']}")
+    print(f"  Selected          : {fs['total_after_selection']}")
+
+    print(f"\n  Top 10 features by |correlation| with failure_flag:")
+    for name, val in list(fs["importances"].items())[:10]:
+        bar = "█" * int(abs(val) * 60)
+        print(f"    {name:20s}  {val:+.4f}  {bar}")
+
+    # ── Phase 3a: Anomaly detection ─────────────────────────────────────
+    _phase("PHASE 3a: Anomaly Detection (Isolation Forest)")
+    anomaly_result = detect_anomalies(df, selected)
+    print(f"  Total samples   : {anomaly_result['total_samples']}")
+    print(f"  Anomalies found : {anomaly_result['num_anomalies']}")
+    print(f"  Normal          : {anomaly_result['num_normal']}")
+
+    if anomaly_result["anomaly_details"]:
+        print(f"\n  Top 3 anomalies:")
+        for det in anomaly_result["anomaly_details"][:3]:
+            label = "FAIL" if det["failure_flag"] == 1 else "PASS"
+            print(f"    Sample {det['index']} ({label}): "
+                  f"score={det['anomaly_score']:.4f}")
+            for feat in det["top_features"][:3]:
+                print(f"      → {feat['feature']}: z={feat['z_score']:.1f}")
+
+    # ── Phase 3c: Sensor-failure correlation ────────────────────────────
+    _phase("PHASE 3c: Feature–Failure Correlation")
+    corr_result = compute_correlations(df, selected)
+    top_corrs = corr_result["correlations"][:10]
+    for c in top_corrs:
+        bar = "█" * int(c["abs_correlation"] * 40)
+        sign = "+" if c["correlation"] > 0 else "−"
+        print(f"  {c['feature']:20s}  {sign}{c['abs_correlation']:.4f}  {bar}")
+
+    # ── Phase 4: Predictive model + SHAP ────────────────────────────────
+    _phase("PHASE 4: Failure Prediction — Stratified 5-Fold CV + SMOTE")
+    model_result = train_and_evaluate(df, selected)
+
+    _header("MODEL EVALUATION RESULTS")
+    print(f"  Best model  : {model_result['best_model']}")
+    print(f"  CV Accuracy : {model_result['cv_accuracy']:.4f}")
+    print(f"  CV Precision: {model_result['cv_precision']:.4f}")
+    print(f"  CV Recall   : {model_result['cv_recall']:.4f}")
+    print(f"  CV F1 Score : {model_result['cv_f1']:.4f}")
+    print(f"  CV AUC-ROC  : {model_result['cv_auc_roc']:.4f}")
+    print(f"  Folds       : {model_result['n_folds']}")
+
+    cm = model_result["confusion_matrix"]
+    print(f"\n  Confusion Matrix (summed across folds):")
+    print(f"                Predicted PASS  Predicted FAIL")
+    print(f"    Actual PASS    {cm[0][0]:>8}        {cm[0][1]:>8}")
+    print(f"    Actual FAIL    {cm[1][0]:>8}        {cm[1][1]:>8}")
+
+    # Model comparison
+    print(f"\n  Model comparison (all tested):")
+    for comp in model_result["models_comparison"]:
+        print(f"    {comp['model']:25s}  "
+              f"F1={comp['f1']:.4f}  "
+              f"AUC={comp['auc_roc']:.4f}  "
+              f"Acc={comp['accuracy']:.4f}")
+
+    # Feature importances
+    if model_result.get("feature_importances"):
+        print(f"\n  Top 10 feature importances:")
+        for i, (feat, imp) in enumerate(
+            list(model_result["feature_importances"].items())[:10]
+        ):
+            bar = "█" * int(float(imp) * 50)
+            print(f"    {feat:20s}  {float(imp):.4f}  {bar}")
+
+    # SHAP summary
+    if model_result.get("shap_summary") and not any(
+        "error" in s for s in model_result["shap_summary"]
+    ):
+        print(f"\n  Top 10 SHAP importances (mean |SHAP|):")
+        for s in model_result["shap_summary"][:10]:
+            bar = "█" * int(s["mean_abs_shap"] * 100)
+            print(f"    {s['feature']:20s}  {s['mean_abs_shap']:.6f}  {bar}")
+
+    # ── Phase 5: Root cause analysis ────────────────────────────────────
+    _phase("PHASE 5: Root Cause Analysis (cosine similarity + z-scores)")
+    rca_result = analyze_root_causes(df, selected, max_failures=5)
+
+    print(f"  Total failures in dataset : {rca_result['total_failures']}")
+    print(f"  Analysed (capped)         : {rca_result['analyzed']}")
+
+    for analysis in rca_result["analyses"]:
+        print(f"\n  --- Sample {analysis['sample_index']} ---")
+        if analysis["root_causes"]:
+            print(f"  Probable root causes:")
+            for rc in analysis["root_causes"][:3]:
+                print(f"    #{rc['rank']}: {rc['feature']} "
+                      f"(z={rc['z_score']:.1f}, "
+                      f"confidence={rc['confidence']}%, "
+                      f"level={rc['level']})")
+                print(f"       failed={rc['failed_value']:.4f}  "
+                      f"best_pass={rc['best_pass_value']:.4f}")
+        if analysis["similar_passing"]:
+            best_sim = analysis["similar_passing"][0]
+            print(f"  Most similar passing sample: index {best_sim['index']} "
+                  f"(similarity={best_sim['similarity']:.4f})")
+
+    # ── Done ────────────────────────────────────────────────────────────
+    print("\n" + "=" * 70)
+    print("✅ Pipeline complete — all phases executed on real SECOM data.")
+    print("=" * 70)
+
+
+# ---------------------------------------------------------------------------
+# Demo mode (tiny synthetic dataset — NOT for evaluation)
+# ---------------------------------------------------------------------------
+
+def run_demo_pipeline():
+    """Run a quick demo on the small synthetic wafer_lots dataset.
+
+    This mode exists only for fast smoke-testing. The synthetic dataset
+    has only ~30 samples, so any metrics are statistically meaningless.
+    """
+    print("╔" + "═" * 68 + "╗")
+    print("║   ⚠️  DEMO MODE                                                    ║")
+    print("║   N=30 synthetic samples — results are NOT statistically           ║")
+    print("║   meaningful and must NOT be used for evaluation claims.            ║")
+    print("╚" + "═" * 68 + "╝")
+
+    # Check if demo data exists
+    try:
+        from analysis.data_loader import build_lot_dataset, validate_dataset
+        from analysis.anomaly_detection import (
+            detect_sensor_anomalies,
+            print_anomaly_report,
+            analyze_equipment_performance,
+            sensor_failure_correlation,
+        )
+        from analysis.predictive_model import (
+            train_failure_predictor,
+            explain_failures_shap,
+        )
+        from analysis.root_cause_analyzer import (
+            rank_root_causes,
+            print_root_cause_report,
+        )
+    except ImportError as e:
+        print(f"\n❌ Demo mode requires factory lot functions: {e}")
+        print("   These functions are only available if the codebase includes")
+        print("   the synthetic wafer_lots pipeline. Use the default SECOM mode.")
+        return
+
+    raw_dir = _SRC_DIR / "data" / "raw"
+    required = ["wafer_lots.csv", "sensor_data.csv",
+                "defect_data.csv", "process_parameters.csv"]
+    missing = [f for f in required if not (raw_dir / f).exists()]
+    if missing:
+        print(f"\n❌ Demo data missing: {missing}")
+        print(f"   Expected in: {raw_dir}")
+        print("   Use the default SECOM mode instead: python src/app.py")
+        return
+
+    print("\n⚠️  DEMO MODE: N=30 synthetic samples, results are not "
+          "statistically meaningful and must not be used for evaluation claims\n")
+
+    _phase("DEMO Phase 2: Load synthetic wafer lots")
     lot_data, sensors, defects = build_lot_dataset()
     validate_dataset(lot_data)
 
-    # ── Phase 3a: Anomaly detection ────────────────────────────────────
-    print("\n▶ PHASE 3a: Anomaly Detection (Isolation Forest)")
+    _phase("DEMO Phase 3a: Anomaly Detection")
     lot_data = detect_sensor_anomalies(lot_data)
     print_anomaly_report(lot_data)
+    print("\n⚠️  DEMO MODE: anomaly counts on N=30 are not meaningful")
 
-    # ── Phase 3b: Equipment performance ────────────────────────────────
-    print("\n▶ PHASE 3b: Equipment Performance")
+    _phase("DEMO Phase 3b: Equipment Performance")
     analyze_equipment_performance(lot_data)
 
-    # ── Phase 3c: Sensor-failure correlation ───────────────────────────
-    print("\n▶ PHASE 3c: Sensor–Failure Correlation")
+    _phase("DEMO Phase 3c: Sensor–Failure Correlation")
     sensor_failure_correlation(lot_data)
 
-    # ── Phase 4: Predictive model ──────────────────────────────────────
-    print("\n▶ PHASE 4: Failure Prediction Model + SHAP")
+    _phase("DEMO Phase 4: Failure Prediction (simple train/test split)")
     model_artifacts = train_failure_predictor(lot_data)
     explain_failures_shap(model_artifacts, lot_data)
+    print("\n⚠️  DEMO MODE: model metrics on N=30 (e.g. 100% accuracy) are "
+          "artifacts of extreme overfitting on a tiny sample — do NOT cite them")
 
-    # ── Phase 5: Root cause analysis ───────────────────────────────────
-    print("\n▶ PHASE 5: Root Cause Analysis")
+    _phase("DEMO Phase 5: Root Cause Analysis")
     failed_lots = lot_data[lot_data["failure_flag"] == 1]["lot_id"].tolist()
-    for lot_id in failed_lots:
+    for lot_id in failed_lots[:3]:  # Cap at 3 for demo
         report = rank_root_causes(lot_id, lot_data)
         print_root_cause_report(report)
 
-    # ── Phase 6: Demo batch risk scoring ───────────────────────────────
-    print("\n▶ PHASE 6: Batch Risk Scoring (demo)")
-    demo_batch_good = {
-        "equipment_id": "EQPM_A_AFTER_MAINT",
-        "process_recipe": "Recipe_3nm_V2.2",
-        "target_temp_C": 301.5,
-        "target_pressure_pa": 134.5,
-        "target_power_w": 451.5,
-        "etch_time_sec": 700,
-    }
-    assessment = score_upcoming_batch(demo_batch_good, model_artifacts, lot_data)
-    print_batch_risk_report(assessment, demo_batch_good)
-
-    demo_batch_risky = {
-        "equipment_id": "EQPM_B",
-        "process_recipe": "Recipe_3nm_V2.1",
-        "target_temp_C": 295.0,
-        "target_pressure_pa": 130.0,
-        "target_power_w": 445.0,
-        "etch_time_sec": 720,
-    }
-    assessment2 = score_upcoming_batch(demo_batch_risky, model_artifacts, lot_data)
-    print_batch_risk_report(assessment2, demo_batch_risky)
-
-    print("\n✅ Pipeline complete.")
+    print("\n" + "=" * 70)
+    print("⚠️  DEMO pipeline complete (N=30 synthetic samples).")
+    print("   For real evaluation, run:  python src/app.py  (without --demo)")
+    print("=" * 70)
 
 
 # ---------------------------------------------------------------------------
@@ -282,23 +288,20 @@ def main():
         description="Semiconductor Yield Optimization Pipeline"
     )
     parser.add_argument(
-        "--predict_batch", type=str, default=None,
-        help="Path to CSV with upcoming batch parameters to score"
+        "--demo", action="store_true",
+        help="Run on tiny synthetic wafer_lots (N=30) instead of real SECOM data. "
+             "Results are NOT statistically meaningful."
+    )
+    parser.add_argument(
+        "--top-k", type=int, default=30,
+        help="Number of top features to select (default: 30, empirically optimal)"
     )
     args = parser.parse_args()
 
-    if args.predict_batch:
-        # Score a specific batch from CSV
-        lot_data, _, _ = build_lot_dataset()
-        model_artifacts = train_failure_predictor(lot_data)
-
-        batch_df = pd.read_csv(args.predict_batch)
-        for _, row in batch_df.iterrows():
-            batch_params = row.to_dict()
-            assessment = score_upcoming_batch(batch_params, model_artifacts, lot_data)
-            print_batch_risk_report(assessment, batch_params)
+    if args.demo:
+        run_demo_pipeline()
     else:
-        run_full_pipeline()
+        run_secom_pipeline(top_k=args.top_k)
 
 
 if __name__ == "__main__":
