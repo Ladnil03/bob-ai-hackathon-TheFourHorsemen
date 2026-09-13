@@ -122,6 +122,117 @@ def select_features(df: pd.DataFrame, feature_cols: list,
 
 
 # ---------------------------------------------------------------------------
+# Phase 2b — Sensor feature extraction
+# ---------------------------------------------------------------------------
+
+def extract_sensor_features(sensor_df: pd.DataFrame) -> pd.DataFrame:
+    """Aggregate time-series sensor readings into per-lot statistical features.
+
+    For every ``lot_id`` in *sensor_df* we compute:
+    - temp_mean, temp_std, temp_drift
+    - pressure_mean, pressure_std, pressure_drift
+    - flow_mean, flow_std
+    - power_mean, power_std
+    - etch_rate_max, etch_rate_std
+    - cd_drift
+    - humidity_mean
+    """
+    features = []
+
+    for lot_id, group in sensor_df.groupby("lot_id"):
+        group = group.sort_values("timestamp_minutes")
+
+        # --- Temperature features ---
+        temp_mean = group["chamber_temp_C"].mean()
+        temp_std = group["chamber_temp_C"].std(ddof=0)
+        temp_drift = group["chamber_temp_C"].max() - group["chamber_temp_C"].min()
+
+        # --- Pressure features (STRONGEST failure predictor) ---
+        pressure_mean = group["pressure_pa"].mean()
+        pressure_std = group["pressure_pa"].std(ddof=0)
+        pressure_drift = group["pressure_pa"].max() - group["pressure_pa"].min()
+
+        # --- Flow-rate features ---
+        flow_mean = group["flow_rate_sccm"].mean()
+        flow_std = group["flow_rate_sccm"].std(ddof=0)
+
+        # --- Power features ---
+        power_mean = group["power_w"].mean()
+        power_std = group["power_w"].std(ddof=0)
+
+        # --- Etch-rate features ---
+        etch_rate_max = group["etch_rate_nm_min"].max()
+        etch_rate_std = group["etch_rate_nm_min"].std(ddof=0)
+
+        # --- Critical dimension tracking ---
+        cd_drift = group["critical_dimension_nm"].max() - group["critical_dimension_nm"].min()
+
+        # --- Humidity (auxiliary) ---
+        humidity_mean = group["humidity_percent"].mean()
+
+        features.append({
+            "lot_id": lot_id,
+            "temp_mean": round(temp_mean, 3),
+            "temp_std": round(temp_std, 4),
+            "temp_drift": round(temp_drift, 2),
+            "pressure_mean": round(pressure_mean, 3),
+            "pressure_std": round(pressure_std, 4),
+            "pressure_drift": round(pressure_drift, 2),
+            "flow_mean": round(flow_mean, 3),
+            "flow_std": round(flow_std, 4),
+            "power_mean": round(power_mean, 3),
+            "power_std": round(power_std, 4),
+            "etch_rate_max": round(etch_rate_max, 2),
+            "etch_rate_std": round(etch_rate_std, 4),
+            "cd_drift": round(cd_drift, 3),
+            "humidity_mean": round(humidity_mean, 3),
+        })
+
+    return pd.DataFrame(features)
+
+
+# ---------------------------------------------------------------------------
+# Phase 2c — Defect feature extraction
+# ---------------------------------------------------------------------------
+
+def extract_defect_features(defect_df: pd.DataFrame) -> pd.DataFrame:
+    """Aggregate per-wafer defect records into per-lot summary features."""
+    features = []
+
+    for lot_id, group in defect_df.groupby("lot_id"):
+        total_defects = group["defect_count"].sum()
+
+        # Per-type counts
+        def _type_count(dtype):
+            return group.loc[group["defect_type"] == dtype, "defect_count"].sum()
+
+        metal_void_count = _type_count("METAL_VOID")
+        cd_shift_count = _type_count("CRITICAL_DIMENSION_SHIFT")
+        gate_thin_count = _type_count("GATE_DIELECTRIC_THIN")
+        line_roughness_count = _type_count("LINE_ROUGHNESS")
+        particle_count = _type_count("PARTICLE_CONTAMINATION")
+
+        # Severity — only consider wafers that actually have defects
+        has_defects = group[group["defect_count"] > 0]
+        avg_severity = has_defects["severity_1_to_5"].mean() if len(has_defects) > 0 else 0.0
+        max_severity = has_defects["severity_1_to_5"].max() if len(has_defects) > 0 else 0
+
+        features.append({
+            "lot_id": lot_id,
+            "total_defects": int(total_defects),
+            "metal_void_count": int(metal_void_count),
+            "cd_shift_count": int(cd_shift_count),
+            "gate_thin_count": int(gate_thin_count),
+            "line_roughness_count": int(line_roughness_count),
+            "particle_count": int(particle_count),
+            "avg_severity": round(avg_severity, 2) if not np.isnan(avg_severity) else 0.0,
+            "max_severity": int(max_severity),
+        })
+
+    return pd.DataFrame(features)
+
+
+# ---------------------------------------------------------------------------
 # CLI self-test
 # ---------------------------------------------------------------------------
 

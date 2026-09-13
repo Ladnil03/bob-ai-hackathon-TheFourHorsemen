@@ -235,6 +235,177 @@ def predict_sample(sample: dict, model_artifacts: dict) -> dict:
         "top_features": [{"feature": f, "importance": v} for f, v in top_feats],
     }
 
+# ---------------------------------------------------------------------------
+# Factory wafer lot predictive modeling (Phase 4 / CLI pipeline)
+# ---------------------------------------------------------------------------
+
+FEATURE_COLS = [
+    "pressure_drift",    # #1 predictor
+    "temp_drift",
+    "etch_rate_max",
+    "flow_std",
+    "power_std",
+    "cd_drift",
+    "humidity_mean",
+    "etch_rate_std",
+    "temp_std",
+    "pressure_std",
+]
+
+
+def train_failure_predictor(lot_data: pd.DataFrame, test_fraction: float = 0.2):
+    """Train a Random Forest to predict ``failure_flag``.
+
+    Parameters
+    ----------
+    lot_data : pd.DataFrame
+        Merged lot dataset produced by ``build_lot_dataset``.
+    test_fraction : float
+        Fraction of lots to hold out for testing.
+
+    Returns
+    -------
+    dict with model, scaler, features, X_train, X_test, y_train, y_test,
+    X_test_scaled, test_lot_ids, report.
+    """
+    from sklearn.model_selection import train_test_split
+
+    available_features = [c for c in FEATURE_COLS if c in lot_data.columns]
+
+    X_all = lot_data[available_features].values
+    y_all = lot_data["failure_flag"].values
+    lot_ids = lot_data["lot_id"].values
+
+    X_train, X_test, y_train, y_test, ids_train, ids_test = train_test_split(
+        X_all, y_all, lot_ids,
+        test_size=test_fraction,
+        random_state=42,
+        stratify=y_all,
+    )
+
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    model = RandomForestClassifier(
+        n_estimators=100,
+        max_depth=5,
+        random_state=42,
+        class_weight="balanced",
+    )
+    model.fit(X_train_scaled, y_train)
+
+    y_pred = model.predict(X_test_scaled)
+    report = classification_report(
+        y_test, y_pred,
+        labels=[0, 1],
+        target_names=["PASS", "FAIL"],
+        zero_division=0,
+    )
+    cm = confusion_matrix(y_test, y_pred, labels=[0, 1])
+
+    print("\n" + "=" * 70)
+    print("FAILURE PREDICTION MODEL — Random Forest")
+    print("=" * 70)
+    print(f"Training lots : {len(X_train)}  |  Test lots : {len(X_test)}")
+    print(f"\nClassification Report:\n{report}")
+    print(f"Confusion Matrix:\n{cm}")
+
+    importances = pd.Series(
+        model.feature_importances_, index=available_features
+    ).sort_values(ascending=False)
+    print("\nFeature Importances (Gini):")
+    for feat, imp in importances.items():
+        bar = "█" * int(imp * 50)
+        print(f"  {feat:20s}  {imp:.4f}  {bar}")
+
+    return {
+        "model": model,
+        "scaler": scaler,
+        "features": available_features,
+        "X_train": X_train,
+        "X_test": X_test,
+        "y_train": y_train,
+        "y_test": y_test,
+        "X_test_scaled": X_test_scaled,
+        "test_lot_ids": ids_test,
+        "report": report,
+    }
+
+
+def explain_failures_shap(model_artifacts: dict, lot_data: pd.DataFrame):
+    """Generate human-readable SHAP explanations for each predicted failure."""
+    if not HAS_SHAP:
+        print("\n⚠️  SHAP library not installed.  Run:  pip install shap")
+        return
+
+    model = model_artifacts["model"]
+    scaler = model_artifacts["scaler"]
+    features = model_artifacts["features"]
+    X_test_scaled = model_artifacts["X_test_scaled"]
+    y_test = model_artifacts["y_test"]
+    test_lot_ids = model_artifacts["test_lot_ids"]
+
+    pop_means = lot_data[features].mean()
+    pop_stds = lot_data[features].std().replace(0, 1)
+
+    explainer = shap.TreeExplainer(model)
+    shap_values = explainer.shap_values(X_test_scaled)
+
+    if hasattr(shap_values, "values"):
+        shap_values = shap_values.values
+
+    if isinstance(shap_values, list):
+        shap_fail = shap_values[1]
+    elif isinstance(shap_values, np.ndarray) and shap_values.ndim == 3:
+        shap_fail = shap_values[:, :, 1]
+    else:
+        shap_fail = shap_values
+
+    print("\n" + "=" * 70)
+    print("SHAP EXPLANATIONS FOR TEST-SET FAILURES")
+    print("=" * 70)
+
+    y_pred = model.predict(X_test_scaled)
+    failure_mask = (y_pred == 1) | (y_test == 1)
+
+    if not failure_mask.any():
+        print("No failures found in test set.")
+        return
+
+    for idx in np.where(failure_mask)[0]:
+        lot_id = test_lot_ids[idx]
+        actual = "FAIL" if y_test[idx] == 1 else "PASS"
+        predicted = "FAIL" if y_pred[idx] == 1 else "PASS"
+        proba = model.predict_proba(X_test_scaled[idx:idx+1])[0][1]
+
+        print(f"\n  {lot_id}  (actual={actual}, predicted={predicted}, "
+              f"P(fail)={proba:.1%})")
+
+        shap_for_lot = shap_fail[idx]
+        if hasattr(shap_for_lot, "ndim") and shap_for_lot.ndim > 1:
+            shap_for_lot = shap_for_lot[:, -1]
+        raw_values = scaler.inverse_transform(X_test_scaled[idx:idx+1]).flatten()
+        shap_df = pd.DataFrame({
+            "feature": features,
+            "shap_value": np.array(shap_for_lot).flatten(),
+            "raw_value": raw_values,
+        })
+        shap_df["abs_shap"] = shap_df["shap_value"].abs()
+        shap_df = shap_df.sort_values("abs_shap", ascending=False)
+
+        for _, r in shap_df.head(4).iterrows():
+            feat = r["feature"]
+            raw = r["raw_value"]
+            sv = r["shap_value"]
+            z = (raw - pop_means[feat]) / pop_stds[feat]
+            direction = "above" if z > 0 else "below"
+            push = "toward FAILURE" if sv > 0 else "toward PASS"
+            print(f"    → {feat:20s} = {raw:8.2f}  "
+                  f"({abs(z):.1f}σ {direction} mean)  "
+                  f"SHAP {sv:+.4f} ({push})")
+
+
 def main():
     import sys
     sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent.parent))

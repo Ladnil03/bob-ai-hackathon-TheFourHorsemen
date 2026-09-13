@@ -11,7 +11,7 @@
 | **Team Name** | Thefentasticfour |
 | **Track** | AI |
 | **Team Lead** | Team Lead — lead@example.com |
-| **Members** | Member 1, Member 2, Member 3 |
+| **Members** | Manan Panchal,Tirth Bhanderi,Bhakti Ruparel,Nil Lad |
 
 ## 🎯 Problem Statement
 
