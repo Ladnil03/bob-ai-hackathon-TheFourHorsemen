@@ -1,79 +1,97 @@
 # Setup Guide
 
-> **This file is read by the automated evaluation pipeline. Be precise and complete.**
-
 ## Prerequisites
 
-Before you begin, ensure you have the following installed:
+- Python 3.10 or higher
+- Git
+- Bash/terminal (Windows: PowerShell or CMD)
 
-- [ ] [e.g., Python 3.11+]
-- [ ] [e.g., Node.js 18+]
-- [ ] [e.g., Docker Desktop]
-- [ ] [e.g., An IBM Cloud account with watsonx.ai access]
+## Step-by-Step Installation
 
-## Environment Variables
-
-Copy `.env.example` to `.env` and fill in the values:
+### 1. Clone the repository
 
 ```bash
-cp .env.example .env
+git clone https://github.com/Ladnil03/bob-ai-hackathon-Thefentasticfour.git
+cd bob-ai-hackathon-Thefentasticfour
 ```
 
-| Variable | Description | Required |
-|---|---|---|
-| `WATSONX_API_KEY` | Your IBM watsonx.ai API key | Yes |
-| `WATSONX_PROJECT_ID` | Your watsonx.ai project ID | Yes |
-| `DATABASE_URL` | PostgreSQL connection string | Yes |
-| `SLACK_WEBHOOK_URL` | Slack webhook for alerts | No |
+### 2. Create a virtual environment
 
-## Installation
+On macOS/Linux:
+```bash
+python -m venv venv
+source venv/bin/activate
+```
+
+On Windows:
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+### 3. Install dependencies
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/[your-org]/[your-repo].git
-cd [your-repo]
-
-# 2. Install backend dependencies
-[your command — e.g.: pip install -r requirements.txt]
-
-# 3. Install frontend dependencies (if applicable)
-[your command — e.g.: cd frontend && npm install]
-
-# 4. Set up the database (if applicable)
-[your command — e.g.: python manage.py migrate]
+pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
-## Running the Application
+Expected output: "Successfully installed pandas, numpy, scikit-learn, ..."
+
+### 4. Verify data is in place
 
 ```bash
-# Start the backend
-[your command — e.g.: uvicorn app.main:app --reload]
-
-# Start the frontend (in a separate terminal, if applicable)
-[your command — e.g.: cd frontend && npm run dev]
+ls -la src/data/raw/
 ```
 
-The application will be available at: `http://localhost:[PORT]`
+You should see:
+- wafer_lots.csv
+- sensor_data.csv
+- defect_data.csv
+- process_parameters.csv
 
-## Running Tests
+### 5. Run the full pipeline
 
 ```bash
-[your test command — e.g.: pytest tests/ -v]
+python src/app.py
 ```
 
-## Quick Demo (Optional)
+### Expected Output
 
-If you have a demo script or sample data to showcase the project quickly:
+The program should complete in 10–30 seconds and print:
 
-```bash
-[e.g.: python demo/seed_demo_data.py]
-[e.g.: open http://localhost:8000/demo]
 ```
+╔════════════════════════════════════════════════════════════════╗
+║   SEMICONDUCTOR YIELD OPTIMIZATION PIPELINE                    ║
+║   Phases 2–6: Data → Features → Anomalies → Prediction → Action║
+╚════════════════════════════════════════════════════════════════╝
+
+▶ PHASE 2: Data Pipeline & Feature Engineering
+  Loaded 30 lots with 47 features...
+
+▶ PHASE 3a: Anomaly Detection
+  Detected 5 anomalous lots...
+
+[... more phases ...]
+
+✅ Pipeline complete.
+```
+
+## How to Verify It Worked
+
+If you see "Pipeline complete" and no errors → **Success!** ✓
 
 ## Troubleshooting
 
-| Issue | Solution |
-|---|---|
-| [e.g., `ModuleNotFoundError`] | [e.g., Run `pip install -r requirements.txt` again] |
-| [e.g., Database connection refused] | [e.g., Ensure PostgreSQL is running: `docker compose up db`] |
-| [e.g., watsonx.ai 401 error] | [e.g., Check `WATSONX_API_KEY` in your `.env` file] |
+**Error: `ModuleNotFoundError: No module named 'pandas'`**
+- Fix: Run `pip install -r requirements.txt` again
+
+**Error: `FileNotFoundError: [Errno 2] No such file or directory: 'src/data/raw/wafer_lots.csv'`**
+- Fix: Make sure you're in the repo root directory (`bob-ai-hackathon-Thefentasticfour/`)
+
+**Error: `ImportError: No module named 'shap'`**
+- Fix: Run `pip install shap`
+
+**Slow execution (>60 seconds)**
+- Normal on older machines or when running for first time
+- Subsequent runs may cache, making them faster
