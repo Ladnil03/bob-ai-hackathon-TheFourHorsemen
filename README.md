@@ -208,16 +208,21 @@ Open **http://127.0.0.1:5173** to view the live dashboard.
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/api/health` | Service health status & loaded components |
-| `POST` | `/api/predict` | Runs ONNX inference on wafer sensor features |
+| `GET` | `/api/health` | Service health status & loaded pipeline status |
+| `POST` | `/api/predict` | Runs inference on wafer sensor features |
 | `POST` | `/api/explain-llm` | Prescriptive root cause & roadmap via Groq GPT-OSS 120B |
-| `GET` | `/api/rl/recommend` | Recommends recipe offset actions via Thompson Sampling |
-| `POST` | `/api/rl/feedback` | Ingests wafer outcome to update Bayesian posteriors |
-| `GET` | `/api/rl/status` | Current bandit state, exploration statistics, & posteriors |
-| `POST` | `/api/rl/reset` | Resets bandit priors to neutral baseline |
-| `GET` | `/api/mlflow/summary`| Registered models, active production versions, & run logs |
-| `POST` | `/api/mlflow/log-run`| Logs a custom model evaluation or experiment run |
-| `GET` | `/api/batch-risk` | Analyzes multi-wafer batch failure distributions |
+| `GET` | `/api/best-model/status` | Best model (CatBoost + Ensemble) metadata & metrics |
+| `POST` | `/api/best-model/predict-custom` | Custom wafer parameter scoring via Best Model service |
+| `POST` | `/api/best-model/prescribe` | High-precision Groq 120B prescriptive guidance & cost impact |
+| `POST` | `/api/best-model/batch-preflight` | Preflight lot evaluation across multi-wafer manufacturing runs |
+| `POST` | `/api/rl/suggest-recipe-offset` | Recommends recipe offset actions via Thompson Sampling |
+| `POST` | `/api/rl/record-outcome` | Ingests wafer outcome to update Bayesian posteriors |
+| `GET` | `/api/rl/policy-dashboard` | Current bandit state, exploration statistics, & posterior distributions |
+| `POST` | `/api/rl/simulate-batch` | Simulates a production batch to demonstrate adaptive learning |
+| `POST` | `/api/mlflow/register-current` | Registers loaded model into MLflow Model Registry |
+| `GET` | `/api/mlflow/model-versions` | Lists registered model versions with staging/production status |
+| `POST` | `/api/mlflow/promote` | Promotes model version (e.g. Staging → Production) |
+| `GET` | `/api/mlflow/experiments` | Experiment tracking logs and RL trial metric history |
 
 ---
 
