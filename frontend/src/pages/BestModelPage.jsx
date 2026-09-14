@@ -199,7 +199,7 @@ export default function BestModelPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-8 pb-12">
       {/* Top Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 sm:p-8 shadow-xl border border-indigo-900/50">
+      <div className="relative overflow-hidden rounded-2xl bg-primary text-primary-foreground p-6 sm:p-8 shadow-xl border border-border/50">
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold border border-indigo-400/30">
@@ -461,8 +461,8 @@ export default function BestModelPage() {
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${
                           predictionResult.predicted_failure
-                            ? 'bg-gradient-to-r from-orange-500 to-rose-600'
-                            : 'bg-gradient-to-r from-emerald-400 to-teal-500'
+                            ? 'bg-destructive'
+                            : 'bg-success'
                         }`}
                         style={{ width: `${Math.min(predictionResult.failure_probability_pct * 2.5, 100)}%` }}
                       />
@@ -524,7 +524,7 @@ export default function BestModelPage() {
                 )}
 
                 {/* Groq AI Prescriptive Actions */}
-                <div className="bg-gradient-to-br from-indigo-900/5 via-slate-50 to-white rounded-xl border border-indigo-200/80 p-6 shadow-sm space-y-4">
+                <div className="bg-card rounded-xl border border-border p-6 shadow-sm space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-indigo-100 pb-3">
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-sm">

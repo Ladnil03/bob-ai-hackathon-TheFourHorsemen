@@ -13,7 +13,7 @@ const CHART_COLORS = ['#2563eb', '#7c3aed', '#8b5cf6', '#a78bfa', '#c4b5fd'];
 
 function KpiCard({ icon: Icon, label, value, color, sub }) {
   return (
-    <div className="card-hover bg-white rounded-xl border border-border p-5 flex items-start gap-4">
+    <div className="card-hover bg-card rounded-xl border border-border p-5 flex items-start gap-4 shadow-sm">
       <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${color}`}>
         <Icon className="w-5 h-5 text-white" />
       </div>
@@ -21,6 +21,37 @@ function KpiCard({ icon: Icon, label, value, color, sub }) {
         <p className="text-xs text-muted-foreground font-medium">{label}</p>
         <p className="text-xl font-bold text-foreground mt-0.5">{value}</p>
         {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
+      </div>
+    </div>
+  );
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="h-8 w-32 bg-muted rounded-md animate-pulse"></div>
+      
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        {[1, 2, 3, 4, 5, 6].map(i => (
+          <div key={i} className="bg-card rounded-xl border border-border p-5 flex items-start gap-4">
+            <div className="w-10 h-10 rounded-lg bg-muted animate-pulse"></div>
+            <div className="flex-1 space-y-2">
+              <div className="h-3 w-16 bg-muted rounded animate-pulse"></div>
+              <div className="h-5 w-24 bg-muted rounded animate-pulse"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 bg-card rounded-xl border border-border p-5 h-96 flex flex-col gap-4">
+          <div className="h-5 w-48 bg-muted rounded animate-pulse"></div>
+          <div className="flex-1 bg-muted/50 rounded animate-pulse"></div>
+        </div>
+        <div className="bg-card rounded-xl border border-border p-5 h-96 flex flex-col gap-4">
+          <div className="h-5 w-40 bg-muted rounded animate-pulse"></div>
+          <div className="flex-1 bg-muted/50 rounded animate-pulse rounded-full w-48 h-48 mx-auto mt-8"></div>
+        </div>
       </div>
     </div>
   );
@@ -46,7 +77,6 @@ export default function DashboardPage() {
         setCorrelations(corrRes.data.correlations?.slice(0, 15) || []);
         setModelData(modelRes.data);
       } catch {
-        // Pipeline not run yet
         setOverview(null);
       } finally {
         setLoading(false);
@@ -56,17 +86,13 @@ export default function DashboardPage() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin w-8 h-8 border-3 border-primary border-t-transparent rounded-full" />
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   if (!overview) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 bg-white rounded-2xl border border-border gap-4 text-center max-w-lg mx-auto mt-12 shadow-sm">
-        <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center p-12 bg-card rounded-2xl border border-border gap-4 text-center max-w-lg mx-auto mt-12 shadow-sm">
+        <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
           <Layers className="w-6 h-6" />
         </div>
         <div className="space-y-1">
@@ -78,13 +104,13 @@ export default function DashboardPage() {
         <div className="flex gap-3 pt-2">
           <button
             onClick={() => navigate('/best-model')}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity shadow-sm"
           >
             Explore Best Model (SOTA)
           </button>
           <button
-            onClick={() => navigate('/')}
-            className="px-4 py-2 border border-border text-foreground rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors"
+            onClick={() => navigate('/upload')}
+            className="px-4 py-2 border border-border text-foreground rounded-lg text-sm font-medium hover:bg-secondary transition-colors"
           >
             Run Standard Pipeline
           </button>
@@ -126,37 +152,37 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
 
-      {/* KPI cards */}
+      {/* KPI cards - No Gradients */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        <KpiCard icon={Layers} label="Samples" value={overview.total_samples.toLocaleString()} color="gradient-primary" />
-        <KpiCard icon={Activity} label="Features" value={overview.features_selected} color="bg-accent" />
-        <KpiCard icon={Target} label="Accuracy" value={`${(overview.cv_accuracy * 100).toFixed(1)}%`} color="gradient-success" sub="5-fold CV" />
-        <KpiCard icon={TrendingUp} label="AUC-ROC" value={`${(overview.cv_auc_roc * 100).toFixed(1)}%`} color="bg-blue-500" sub="5-fold CV" />
-        <KpiCard icon={AlertTriangle} label="Anomalies" value={overview.anomalies_found} color="gradient-warning" />
-        <KpiCard icon={XCircle} label="Failures" value={overview.total_failures} color="gradient-danger" sub={`${((overview.total_failures / overview.total_samples) * 100).toFixed(1)}% rate`} />
+        <KpiCard icon={Layers} label="Samples" value={overview.total_samples.toLocaleString()} color="bg-primary" />
+        <KpiCard icon={Activity} label="Features" value={overview.features_selected} color="bg-chart-3" />
+        <KpiCard icon={Target} label="Accuracy" value={`${(overview.cv_accuracy * 100).toFixed(1)}%`} color="bg-chart-2" sub="5-fold CV" />
+        <KpiCard icon={TrendingUp} label="AUC-ROC" value={`${(overview.cv_auc_roc * 100).toFixed(1)}%`} color="bg-chart-1" sub="5-fold CV" />
+        <KpiCard icon={AlertTriangle} label="Anomalies" value={overview.anomalies_found} color="bg-chart-4" />
+        <KpiCard icon={XCircle} label="Failures" value={overview.total_failures} color="bg-destructive" sub={`${((overview.total_failures / overview.total_samples) * 100).toFixed(1)}% rate`} />
       </div>
 
       {/* Charts row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Correlation chart */}
-        <div className="lg:col-span-2 bg-white rounded-xl border border-border p-5">
+        <div className="lg:col-span-2 bg-card rounded-xl border border-border p-5 shadow-sm">
           <h3 className="font-semibold text-foreground mb-4">Top Feature-Failure Correlations</h3>
           <ResponsiveContainer width="100%" height={320}>
             <BarChart data={corrData} layout="vertical" margin={{ left: 10, right: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis type="number" tick={{ fontSize: 11 }} />
-              <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 10 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+              <XAxis type="number" tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} />
+              <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 10, fill: "var(--color-muted-foreground)" }} />
               <Tooltip
                 formatter={(v, name, props) => [v, props.payload.fullName]}
-                contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                contentStyle={{ borderRadius: '8px', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-card)', color: 'var(--color-foreground)' }}
               />
-              <Bar dataKey="correlation" fill="#2563eb" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="correlation" fill="var(--color-primary)" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         {/* Pie chart */}
-        <div className="bg-white rounded-xl border border-border p-5">
+        <div className="bg-card rounded-xl border border-border p-5 shadow-sm">
           <h3 className="font-semibold text-foreground mb-4">Class Distribution</h3>
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
@@ -165,7 +191,7 @@ export default function DashboardPage() {
                   <Cell key={i} fill={COLORS[i]} />
                 ))}
               </Pie>
-              <Tooltip />
+              <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-card)' }} />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -174,33 +200,33 @@ export default function DashboardPage() {
       {/* Charts row 2 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Radar chart */}
-        <div className="bg-white rounded-xl border border-border p-5">
+        <div className="bg-card rounded-xl border border-border p-5 shadow-sm">
           <h3 className="font-semibold text-foreground mb-4">Model Performance (5-Fold CV)</h3>
           <ResponsiveContainer width="100%" height={300}>
             <RadarChart data={radarData}>
-              <PolarGrid stroke="#e2e8f0" />
-              <PolarAngleAxis dataKey="metric" tick={{ fontSize: 11 }} />
+              <PolarGrid stroke="var(--color-border)" />
+              <PolarAngleAxis dataKey="metric" tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} />
               <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 10 }} />
-              <Radar name="Score" dataKey="value" stroke="#2563eb" fill="#2563eb" fillOpacity={0.2} strokeWidth={2} />
+              <Radar name="Score" dataKey="value" stroke="var(--color-primary)" fill="var(--color-primary)" fillOpacity={0.2} strokeWidth={2} />
               <Legend />
-              <Tooltip formatter={(v) => `${v.toFixed(1)}%`} />
+              <Tooltip formatter={(v) => `${v.toFixed(1)}%`} contentStyle={{ borderRadius: '8px', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-card)' }} />
             </RadarChart>
           </ResponsiveContainer>
         </div>
 
         {/* Feature importance */}
-        <div className="bg-white rounded-xl border border-border p-5">
+        <div className="bg-card rounded-xl border border-border p-5 shadow-sm">
           <h3 className="font-semibold text-foreground mb-4">Feature Importances (Gini)</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={importances} layout="vertical" margin={{ left: 10, right: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis type="number" tick={{ fontSize: 11 }} />
-              <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 10 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+              <XAxis type="number" tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }} />
+              <YAxis type="category" dataKey="name" width={110} tick={{ fontSize: 10, fill: "var(--color-muted-foreground)" }} />
               <Tooltip
                 formatter={(v, name, props) => [v, props.payload.fullName]}
-                contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                contentStyle={{ borderRadius: '8px', border: '1px solid var(--color-border)', backgroundColor: 'var(--color-card)', color: 'var(--color-foreground)' }}
               />
-              <Bar dataKey="importance" fill="#7c3aed" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="importance" fill="var(--color-chart-3)" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -209,7 +235,7 @@ export default function DashboardPage() {
       {/* Confusion matrix & Classification Report */}
       {cm && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="bg-white rounded-xl border border-border p-5">
+          <div className="bg-card rounded-xl border border-border p-5 shadow-sm">
             <h3 className="font-semibold text-foreground mb-4">Confusion Matrix (5-Fold CV)</h3>
             <div className="flex justify-center">
               <table className="border-collapse">
@@ -223,20 +249,20 @@ export default function DashboardPage() {
                 <tbody>
                   <tr>
                     <td className="p-3 text-xs font-semibold">Actual PASS</td>
-                    <td className="p-3 text-center font-bold text-lg bg-green-50 border border-green-200 rounded-lg min-w-[80px]">{cm[0][0]}</td>
-                    <td className="p-3 text-center font-bold text-lg bg-red-50 border border-red-200 rounded-lg min-w-[80px]">{cm[0][1]}</td>
+                    <td className="p-3 text-center font-bold text-lg bg-green-50/50 border border-green-200 rounded-lg min-w-[80px]">{cm[0][0]}</td>
+                    <td className="p-3 text-center font-bold text-lg bg-red-50/50 border border-red-200 rounded-lg min-w-[80px]">{cm[0][1]}</td>
                   </tr>
                   <tr>
                     <td className="p-3 text-xs font-semibold">Actual FAIL</td>
-                    <td className="p-3 text-center font-bold text-lg bg-orange-50 border border-orange-200 rounded-lg min-w-[80px]">{cm[1][0]}</td>
-                    <td className="p-3 text-center font-bold text-lg bg-green-50 border border-green-200 rounded-lg min-w-[80px]">{cm[1][1]}</td>
+                    <td className="p-3 text-center font-bold text-lg bg-orange-50/50 border border-orange-200 rounded-lg min-w-[80px]">{cm[1][0]}</td>
+                    <td className="p-3 text-center font-bold text-lg bg-green-50/50 border border-green-200 rounded-lg min-w-[80px]">{cm[1][1]}</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-border overflow-hidden">
+          <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
             <div 
               className="p-5 border-b border-border bg-muted/30 flex justify-between items-center cursor-pointer hover:bg-muted/50 transition-colors"
               onClick={() => setIsReportOpen(!isReportOpen)}
@@ -267,7 +293,7 @@ export default function DashboardPage() {
                       <td className="px-6 py-4 font-mono">{(modelData.classification_report['PASS']?.['f1-score'] || 0).toFixed(4)}</td>
                     </tr>
                     <tr className="border-b border-border hover:bg-muted/30">
-                      <td className="px-6 py-4 font-medium flex items-center gap-2">FAIL <span className="w-2 h-2 rounded-full bg-red-500"></span></td>
+                      <td className="px-6 py-4 font-medium flex items-center gap-2">FAIL <span className="w-2 h-2 rounded-full bg-destructive"></span></td>
                       <td className="px-6 py-4 font-mono">{(modelData.classification_report['FAIL']?.precision || 0).toFixed(4)}</td>
                       <td className="px-6 py-4 font-mono">{(modelData.classification_report['FAIL']?.recall || 0).toFixed(4)}</td>
                       <td className="px-6 py-4 font-mono">{(modelData.classification_report['FAIL']?.['f1-score'] || 0).toFixed(4)}</td>
@@ -287,7 +313,7 @@ export default function DashboardPage() {
 
       {/* Multi-Model Comparison */}
       {modelData && modelData.models_comparison && (
-        <div className="bg-white rounded-xl border border-border overflow-hidden mt-4">
+        <div className="bg-card rounded-xl border border-border overflow-hidden mt-4 shadow-sm">
             <div className="p-5 border-b border-border bg-muted/30">
               <h3 className="font-semibold text-foreground">Multi-Model Comparison (SMOTE Enabled)</h3>
               <p className="text-xs text-muted-foreground mt-1">Cross-validated metrics for all evaluated models. The pipeline automatically selects the best model based on F1-Score: <strong>{modelData.best_model}</strong></p>
@@ -309,7 +335,7 @@ export default function DashboardPage() {
                     <tr key={i} className={`border-b border-border hover:bg-muted/30 ${m.model === modelData.best_model ? 'bg-primary/5' : ''}`}>
                       <td className="px-6 py-4 font-medium flex items-center gap-2">
                         {m.model}
-                        {m.model === modelData.best_model && <span className="text-[10px] bg-primary text-white px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">Selected</span>}
+                        {m.model === modelData.best_model && <span className="text-[10px] bg-primary text-primary-foreground px-2 py-0.5 rounded-full uppercase tracking-wider font-bold">Selected</span>}
                       </td>
                       <td className="px-6 py-4 font-mono font-semibold text-primary">{(m.f1 || 0).toFixed(4)}</td>
                       <td className="px-6 py-4 font-mono">{(m.recall || 0).toFixed(4)}</td>
