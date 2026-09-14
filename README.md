@@ -51,7 +51,7 @@ flowchart TB
 
     subgraph AI["3. Prescriptive AI & Adaptive Optimization"]
         ONNX -->|Anomaly & Sensor Deviations| G[Groq Cloud Copilot\nGPT-OSS 120B MoE Engine]
-        G -->|Root Cause & Action Roadmap| PRES[Prescriptive Remediation\n• 3-Phase Action Roadmap\n• Cost Impact ($ Prevention)\n• Exact Recipe Offsets\n• SPC Alarm Triggers]
+        G -->|Root Cause & Action Roadmap| PRES[Prescriptive Remediation\n• 3-Phase Action Roadmap\n Cost Impact ($ Prevention)\n• Exact Recipe Offsets\n• SPC Alarm Triggers]
         
         ONNX -->|Operational Regime Context| RL[Contextual Bandit\nThompson Sampling (Beta Posteriors)]
         RL -->|Optimized Recipe Offsets| ACT[Recipe Parameter Actions\nRF Power, CF4 Flow, Pressure, ESC Temp]
