@@ -20,11 +20,10 @@ def build_frontend():
         return
 
     print("🔨 Building React frontend...")
-    subprocess.run(
-        ["npm", "ci", "--prefer-offline"],
-        cwd=str(FRONTEND_DIR),
-        check=True,
-    )
+    try:
+        subprocess.run(["npm", "install"], cwd=str(FRONTEND_DIR), check=True)
+    except Exception as e:
+        print(f"⚠️ npm install failed: {e}")
     subprocess.run(
         ["npm", "run", "build"],
         cwd=str(FRONTEND_DIR),
