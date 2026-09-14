@@ -41,30 +41,30 @@ When yield dips or wafers fail electrical testing:
 ```mermaid
 flowchart TB
     subgraph Ingestion["1. Wafer Ingestion & Sensors"]
-        W[UCI SECOM Dataset\n1567 Wafers × 590 Sensors] --> P[Preprocessing Pipeline\nMissing Imputation + Robust Scaling]
+        W["UCI SECOM Dataset<br/>1567 Wafers x 590 Sensors"] --> P["Preprocessing Pipeline<br/>Missing Imputation + Robust Scaling"]
     end
 
     subgraph ML["2. High-Performance Predictive Core"]
-        P --> E[Best Model Ensemble\nTuned CatBoost + Tree Pipeline]
-        E --> ONNX[ONNX Runtime Engine\n<1ms Wafer Inference]
+        P --> E["Best Model Ensemble<br/>Tuned CatBoost + Tree Pipeline"]
+        E --> ONNX["ONNX Runtime Engine<br/>Sub-millisecond Wafer Inference"]
     end
 
     subgraph AI["3. Prescriptive AI & Adaptive Optimization"]
-        ONNX -->|Anomaly & Sensor Deviations| G[Groq Cloud Copilot\nGPT-OSS 120B MoE Engine]
-        G -->|Root Cause & Action Roadmap| PRES[Prescriptive Remediation\n• 3-Phase Action Roadmap\n Cost Impact ($ Prevention)\n• Exact Recipe Offsets\n• SPC Alarm Triggers]
+        ONNX -->|Anomaly & Sensor Deviations| G["Groq Cloud Copilot<br/>GPT-OSS 120B MoE Engine"]
+        G -->|Root Cause & Action Roadmap| PRES["Prescriptive Remediation<br/>- 3-Phase Action Roadmap<br/>- Financial Scrap Prevention<br/>- Exact Recipe Offsets<br/>- SPC Alarm Triggers"]
         
-        ONNX -->|Operational Regime Context| RL[Contextual Bandit\nThompson Sampling (Beta Posteriors)]
-        RL -->|Optimized Recipe Offsets| ACT[Recipe Parameter Actions\nRF Power, CF4 Flow, Pressure, ESC Temp]
+        ONNX -->|Operational Regime Context| RL["Contextual Bandit<br/>Thompson Sampling (Beta Posteriors)"]
+        RL -->|Optimized Recipe Offsets| ACT["Recipe Parameter Actions<br/>RF Power, CF4 Flow, Pressure, ESC Temp"]
         ACT -->|Fab Yield Feedback| RL
     end
 
     subgraph MLOps["4. MLOps Lifecycle Tracking"]
-        E --> MF[MLflow Manager\nModel Registry & Staging/Prod]
+        E --> MF["MLflow Manager<br/>Model Registry & Staging/Prod"]
         RL -->|Trial Metrics & Rewards| MF
     end
 
     subgraph UI["5. Full-Stack Web Application"]
-        PRES --> APP[React 18 + Vite UI\nTailwind CSS Glassmorphism]
+        PRES --> APP["React 18 + Vite UI<br/>Tailwind CSS Glassmorphism"]
         ACT --> APP
         MF --> APP
         ONNX --> APP
