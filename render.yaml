@@ -8,19 +8,13 @@ services:
     runtime: python
     region: oregon
     plan: free
-    buildCommand: |
-      pip install -r src/requirements.txt
-      cd frontend && npm install && npm run build && cd ..
-      rm -rf src/static
-      cp -r frontend/dist src/static
+    buildCommand: pip install -r src/requirements.txt
     startCommand: cd src && python -m uvicorn api:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: GROQ_API_KEY
         sync: false  # Set manually in Render dashboard
       - key: PYTHON_VERSION
         value: "3.11.9"
-      - key: NODE_VERSION
-        value: "22"
     healthCheckPath: /api/health
     autoDeploy: true
 

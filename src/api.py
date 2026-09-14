@@ -64,21 +64,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Production: Serve built React frontend from src/static/
+# Production: Directory for pre-built React frontend assets
 _STATIC_DIR = _SRC_DIR / "static"
-if _STATIC_DIR.exists():
-    from fastapi.staticfiles import StaticFiles
-    from starlette.responses import FileResponse as StarletteFileResponse
-
-    @app.get("/")
-    async def serve_root():
-        return StarletteFileResponse(str(_STATIC_DIR / "index.html"))
-
-    # Mount static assets (JS, CSS, images) AFTER API routes are defined
-    # This is done at module bottom via startup event
-    @app.on_event("startup")
-    async def mount_static():
-        app.mount("/", StaticFiles(directory=str(_STATIC_DIR), html=True), name="static")
 
 
 # ---------------------------------------------------------------------------
@@ -643,8 +630,38 @@ async def mlflow_experiments():
 
 
 # ---------------------------------------------------------------------------
+# Static Files & SPA Fallback (Production)
+# ---------------------------------------------------------------------------
+
+if _STATIC_DIR.exists():
+    from fastapi.staticfiles import StaticFiles
+    from starlette.responses import FileResponse as StarletteFileResponse
+
+    assets_dir = _STATIC_DIR / "assets"
+    if assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        # Never intercept API or docs routes
+        if full_path.startswith("api") or full_path.startswith("docs") or full_path.startswith("openapi.json"):
+            raise HTTPException(status_code=404, detail="Endpoint not found")
+        
+        target_file = _STATIC_DIR / full_path
+        if target_file.is_file():
+            return StarletteFileResponse(str(target_file))
+        
+        index_file = _STATIC_DIR / "index.html"
+        if index_file.exists():
+            return StarletteFileResponse(str(index_file))
+        
+        raise HTTPException(status_code=404, detail="Index file not found")
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
+
 
 if __name__ == "__main__":
     import uvicorn
