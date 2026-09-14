@@ -82,8 +82,8 @@ class GroqYieldAdvisor:
                 "subsystem": subsystem,
             })
 
-        # Try Groq API first if client is available
-        if self.client:
+        # Try Groq API (SDK or direct HTTP) if key or client is available
+        if self.client or self.api_key:
             try:
                 return self._call_groq(wafer_id, defect_prob_pct, threshold, risk_level, enriched_causes, model_name)
             except Exception as exc:
@@ -164,22 +164,66 @@ Provide a COMPREHENSIVE actionable response in JSON format with these exact keys
 }}
 """
 
-        completion = self.client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            model=self.MODEL_ID,
-            temperature=0.25,
-            max_tokens=1500,
-            response_format={"type": "json_object"},
-        )
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
 
-        content = completion.choices[0].message.content
-        parsed = json.loads(content)
-        parsed["powered_by"] = self.MODEL_LABEL
-        parsed["enriched_causes"] = enriched_causes
-        return parsed
+        content = None
+        # Attempt 1: Groq Python SDK
+        if self.client:
+            try:
+                completion = self.client.chat.completions.create(
+                    messages=messages,
+                    model=self.MODEL_ID,
+                    temperature=0.25,
+                    max_tokens=1500,
+                    response_format={"type": "json_object"},
+                )
+                content = completion.choices[0].message.content
+            except Exception as e:
+                log.warning("Groq SDK call failed (%s), trying direct HTTP...", e)
+
+        # Attempt 2: Direct REST call via requests
+        if not content and self.api_key:
+            content = self._call_groq_http(messages)
+
+        if content:
+            parsed = json.loads(content)
+            parsed["powered_by"] = self.MODEL_LABEL
+            parsed["enriched_causes"] = enriched_causes
+            return parsed
+
+        # Attempt 3: Fallback heuristic
+        return self._generate_heuristic_response(wafer_id, defect_prob_pct, threshold, risk_level, enriched_causes, model_name)
+
+    def _call_groq_http(self, messages: List[Dict[str, str]]) -> Optional[str]:
+        """Direct REST fallback to Groq API (immune to SDK library conflicts)."""
+        import requests
+        for model in [self.MODEL_ID, "llama-3.3-70b-versatile"]:
+            try:
+                resp = requests.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {self.api_key}",
+                        "Content-Type": "application/json",
+                    },
+                    json={
+                        "model": model,
+                        "messages": messages,
+                        "temperature": 0.25,
+                        "max_tokens": 1500,
+                        "response_format": {"type": "json_object"},
+                    },
+                    timeout=25,
+                )
+                if resp.status_code == 200:
+                    data = resp.json()
+                    return data["choices"][0]["message"]["content"]
+                log.warning("Groq HTTP call status %d for %s: %s", resp.status_code, model, resp.text[:200])
+            except Exception as e:
+                log.warning("Groq HTTP call failed for %s: %s", model, e)
+        return None
 
     def _generate_heuristic_response(
         self,
