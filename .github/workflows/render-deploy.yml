@@ -1,0 +1,28 @@
+name: 🚀 Render Deploy (CI/CD)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    name: Trigger Render Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Trigger Render Deploy Hook
+        run: |
+          if [ -n "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" ]; then
+            echo "Triggering Render deployment via webhook..."
+            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}")
+            if [ "$RESPONSE" -ge 200 ] && [ "$RESPONSE" -lt 300 ]; then
+              echo "✅ Render deploy triggered successfully (HTTP $RESPONSE)."
+            else
+              echo "⚠️ Deploy hook returned status HTTP $RESPONSE"
+            fi
+          else
+            echo "ℹ️ RENDER_DEPLOY_HOOK_URL secret not configured in GitHub Secrets."
+            echo "Render's built-in Auto-Deploy (from render.yaml) is actively managing git push deployments."
+          fi
