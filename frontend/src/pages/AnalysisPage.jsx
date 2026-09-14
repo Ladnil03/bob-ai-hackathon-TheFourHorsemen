@@ -130,7 +130,7 @@ function RootCauseTab({ data }) {
             className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition"
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg gradient-danger flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-destructive flex items-center justify-center">
                 <Zap className="w-4 h-4 text-white" />
               </div>
               <div className="text-left">
@@ -163,7 +163,7 @@ function RootCauseTab({ data }) {
 
               {analysis.root_causes.map((rc, j) => (
                 <div key={j} className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
-                  <span className="w-6 h-6 rounded-full gradient-primary flex items-center justify-center text-white text-xs font-bold shrink-0">
+                  <span className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold shrink-0">
                     {rc.rank}
                   </span>
                   <div className="flex-1">
@@ -306,7 +306,7 @@ export default function AnalysisPage() {
       <div className="flex flex-col items-center justify-center h-64 gap-4">
         <AlertTriangle className="w-12 h-12 text-warning" />
         <p className="text-muted-foreground font-medium">Run the pipeline first to see analysis results.</p>
-        <button onClick={() => navigate('/')} className="px-4 py-2 gradient-primary text-white rounded-lg text-sm font-medium">
+        <button onClick={() => navigate('/')} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
           Go to Upload
         </button>
       </div>

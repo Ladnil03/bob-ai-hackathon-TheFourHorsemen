@@ -91,7 +91,7 @@ export default function UploadPage() {
           disabled={loading}
           className="card-hover flex flex-col items-center gap-4 p-8 bg-white rounded-xl border-2 border-dashed border-primary/30 hover:border-primary transition-colors cursor-pointer disabled:opacity-50"
         >
-          <div className="w-14 h-14 rounded-xl gradient-primary flex items-center justify-center shadow-lg shadow-primary/25">
+          <div className="w-14 h-14 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/25">
             <Database className="w-7 h-7 text-white" />
           </div>
           <div className="text-center">
@@ -186,7 +186,7 @@ export default function UploadPage() {
           <button
             onClick={handleRunPipeline}
             disabled={pipelineLoading}
-            className="w-full flex items-center justify-center gap-2 px-6 py-3 gradient-primary text-white font-semibold rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all disabled:opacity-50"
           >
             {pipelineLoading ? (
               <>
