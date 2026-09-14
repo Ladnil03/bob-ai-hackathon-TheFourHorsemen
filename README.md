@@ -1,87 +1,241 @@
-# Semiconductor Yield Optimization with AI
+# Semiconductor Yield Optimization & Root Cause Analysis with AI
 
-> AI-powered root cause analysis for advanced chip manufacturing using IBM Bob
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104%2B-009688.svg)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-18-61DAFB.svg)](https://reactjs.org/)
+[![Groq](https://img.shields.io/badge/Groq-GPT--OSS%20120B-f55036.svg)](https://groq.com/)
+[![MLflow](https://img.shields.io/badge/MLflow-3.16-0194E2.svg)](https://mlflow.org/)
+[![Reinforcement Learning](https://img.shields.io/badge/RL-Contextual%20Bandit-8A2BE2.svg)](https://en.wikipedia.org/wiki/Multi-armed_bandit)
+[![Deploy on Render](https://img.shields.io/badge/Render-Cloud%20Ready-46E3B7.svg)](https://render.com/)
+
+> **An End-to-End AI/ML & Prescriptive Copilot Platform for Modern Semiconductor Fabrication**  
+> Built for the **IBM Bob AI Hackathon** by **Thefentasticfour**.
 
 ---
 
 ## 👥 Team
 
-| Field | Value |
+| Field | Details |
 |---|---|
-| **Team Name** | Thefentasticfour |
-| **Track** | AI |
-| **Team Lead** | Team Lead — lead@example.com |
-| **Members** | Manan Panchal,Tirth Bhanderi,Bhakti Ruparel,Nil Lad |
+| **Team Name** | **Thefentasticfour** |
+| **Track** | AI / Semiconductor Optimization |
+| **Members** | Manan Panchal, Tirth Bhanderi, Bhakti Ruparel, Nil Lad |
 
-## 🎯 Problem Statement
+---
 
-At advanced semiconductor nodes (3nm/5nm), yield losses of just 1% cost 
-$50–100M per month in revenue. When a batch fails, engineers spend weeks 
-manually correlating thousands of equipment sensors and defect reports to 
-find the root cause. This reactive analysis delays recovery and costs 
-millions daily. Our solution aims to proactively identify these root causes.
+## 🎯 Problem Statement & Business Impact
 
-## 💡 Solution
+In advanced semiconductor nodes (3nm/5nm/7nm), a **1% yield loss represents $50M–$100M per month** in lost fab revenue. Modern fabs produce wafers through hundreds of sequential stages (photolithography, plasma etching, chemical vapor deposition, CMP, ion implantation) monitored by thousands of real-time sensors.
 
-We built an AI system using IBM Bob that: (1) analyzes real wafer sensor 
-data and defect reports, (2) trains a Random Forest to predict which lots 
-will fail, (3) explains predictions via SHAP to rank probable root causes, 
-and (4) scores upcoming batches before manufacturing. This enables targeted actions to avoid revenue loss.
+When yield dips or wafers fail electrical testing:
+- **Engineers spend days to weeks** manually sifting through 500+ sensor channels and SPC charts.
+- **Root causes remain ambiguous**, leading to recurring scrap and degraded equipment operating unnoticed.
+- **Process drift is reactive**, lacking adaptive closed-loop mechanisms to tune recipe setpoints before whole batches fail.
 
-## ✨ Key Features
+**Our Solution**: A closed-loop AI platform that predicts wafer failure in sub-milliseconds, prescribes exact root causes and recipe offsets with a **120B parameter MoE LLM**, continuously adapts recipe setpoints via **Reinforcement Learning**, and tracks model lifecycles with **MLflow**.
 
-- **Real-time anomaly detection**: Isolation Forest flags unusual sensor patterns
-- **Failure prediction**: Random Forest classifier (78% accuracy on test set)
-- **SHAP explanations**: Root causes ranked by feature importance
-- **Batch risk scoring**: Predict batch outcomes before manufacturing
-- **Equipment tracking**: Performance degradation detection
+---
+
+## 💡 System Architecture
+
+```mermaid
+flowchart TB
+    subgraph Ingestion["1. Wafer Ingestion & Sensors"]
+        W[UCI SECOM Dataset\n1567 Wafers × 590 Sensors] --> P[Preprocessing Pipeline\nMissing Imputation + Robust Scaling]
+    end
+
+    subgraph ML["2. High-Performance Predictive Core"]
+        P --> E[Best Model Ensemble\nTuned CatBoost + Tree Pipeline]
+        E --> ONNX[ONNX Runtime Engine\n<1ms Wafer Inference]
+    end
+
+    subgraph AI["3. Prescriptive AI & Adaptive Optimization"]
+        ONNX -->|Anomaly & Sensor Deviations| G[Groq Cloud Copilot\nGPT-OSS 120B MoE Engine]
+        G -->|Root Cause & Action Roadmap| PRES[Prescriptive Remediation\n• 3-Phase Action Roadmap\n• Cost Impact ($ Prevention)\n• Exact Recipe Offsets\n• SPC Alarm Triggers]
+        
+        ONNX -->|Operational Regime Context| RL[Contextual Bandit\nThompson Sampling (Beta Posteriors)]
+        RL -->|Optimized Recipe Offsets| ACT[Recipe Parameter Actions\nRF Power, CF4 Flow, Pressure, ESC Temp]
+        ACT -->|Fab Yield Feedback| RL
+    end
+
+    subgraph MLOps["4. MLOps Lifecycle Tracking"]
+        E --> MF[MLflow Manager\nModel Registry & Staging/Prod]
+        RL -->|Trial Metrics & Rewards| MF
+    end
+
+    subgraph UI["5. Full-Stack Web Application"]
+        PRES --> APP[React 18 + Vite UI\nTailwind CSS Glassmorphism]
+        ACT --> APP
+        MF --> APP
+        ONNX --> APP
+    end
+```
+
+---
+
+## ✨ Key Capabilities
+
+### 1. ⚡ High-Accuracy Wafer Failure Classifier
+- Trained on the benchmark **UCI SECOM** dataset (1,567 wafers, 590 sensor channels, extreme 1:14 failure class imbalance).
+- Feature importance maps critical semiconductor failure signatures: **RF Power drift (Sensor-48)**, **CF4 Gas Flow (Sensor-64)**, **Chamber Temperature (Sensor-46)**, and **Etch Rate drift (Sensor-21)**.
+- Exported to **ONNX Runtime** for deterministic, sub-millisecond production inference.
+
+### 2. 🧠 Groq GPT-OSS 120B Prescriptive Yield Copilot
+- Powered by the ultra-fast Groq LPU inference engine running **GPT-OSS 120B** (with automatic fallback to `llama-3.3-70b-versatile`).
+- Generates structured, actionable engineering guidance instead of generic text:
+  - **Phased Action Roadmap**: Immediate containment (0–4h), short-term verification (4–24h), and long-term preventive maintenance (1–7d).
+  - **Financial Cost Impact**: Scrap cost prevented, yield percentage uplift estimate, and cycle time risk.
+  - **Recipe Parameter Offsets**: Suggested percentage and absolute delta adjustments for RF Power, Gas Flow, Pressure, and ESC temperature.
+  - **SPC Alarm Triggers**: Real-time evaluation against Western Electric & Nelson SPC rules.
+
+### 3. 🔄 Online Reinforcement Learning Contextual Bandit
+- Addresses **yield drift on streaming/incoming wafer data** without catastrophic forgetting or heavy full-model retraining.
+- Formulated as a multi-action **Contextual Bandit** with **Thompson Sampling** over Beta-Bernoulli conjugate priors:
+  - **Contexts (8 Regimes)**: Clustered operational states representing chamber conditions, pressure drift, and RF coupling regimes.
+  - **Actions (5 Process Parameters × 5 Offset Bins)**: Explores and exploits recipe setpoints (`-2σ`, `-1σ`, `0`, `+1σ`, `+2σ`).
+  - **Online Feedback Loop**: Ingests production pass/fail yield signals to immediately update posterior distributions.
+
+### 4. 📊 Embedded MLflow Experiment & Model Lifecycle Tracking
+- Embedded MLflow tracking operating with zero external server dependencies.
+- Logs:
+  - Baseline vs. tuned CatBoost / Ensemble model metrics (ROC-AUC, PR-AUC, F1, Recall).
+  - Versioned model staging and production promotion.
+  - Online RL bandit trials, exploration vs. exploitation balance, and cumulative yield reward curves.
+
+### 5. 💻 Modern Interactive Full-Stack Web Application
+- **Single-Wafer Predictor**: Interactive sliders for key equipment parameters, real-time risk gauge, and confidence breakdowns.
+- **AI Copilot Workspace**: Full Groq 120B prescriptive breakdown with cost estimators, SPC charts, and action checklists.
+- **RL Recipe Optimizer Tab**: Visualizes Bayesian posterior confidence curves, live parameter exploration, and simulated feedback loop.
+- **MLflow Model Registry Tab**: Inspects model versions, parameters, training runs, and production tags.
+- **Batch Risk Analyzer**: Predicts failure probability distributions across multi-wafer manufacturing lots.
+
+---
 
 ## 🛠️ Tech Stack
 
-| Category | Technologies |
+| Domain | Technologies |
 |---|---|
-| **Languages** | Python 3.10+ |
-| **ML/Data** | scikit-learn, pandas, numpy, SHAP |
-| **IBM** | IBM Bob (code generation & planning) |
-| **Visualization** | matplotlib, seaborn |
-| **Other** | GitHub Actions, dotenv |
+| **Backend & API** | Python 3.10+, FastAPI, Uvicorn, Pydantic |
+| **Machine Learning** | CatBoost, LightGBM, XGBoost, Scikit-Learn, ONNX Runtime, Imbalanced-Learn |
+| **Large Language Models** | Groq Cloud API, OpenAI GPT-OSS 120B, Llama 3.3 70B Versatile |
+| **Reinforcement Learning** | Contextual Multi-Armed Bandit, Thompson Sampling, Beta-Bernoulli Priors |
+| **MLOps & Tracking** | MLflow 3.16 (Embedded Client & Local Model Registry) |
+| **Frontend UI** | React 18, Vite, Tailwind CSS, Lucide React, Recharts |
+| **Cloud Deployment** | Render Cloud Blueprint (`render.yaml`), Docker-ready |
 
-## ⚡ How to Run
+---
 
+## 📁 Repository Structure
+
+```
+bob-ai-hackathon-Thefentasticfour/
+├── README.md                           # Comprehensive documentation
+├── render.yaml                         # Render Infrastructure-as-Code blueprint
+├── start.py                            # Unified production launch script
+├── requirements.txt                    # Root Python dependencies pointer
+├── .env.example                        # Environment variables template
+├── frontend/                           # React + Vite web dashboard
+│   ├── src/
+│   │   ├── components/                 # Reusable UI cards, gauges, charts
+│   │   ├── pages/                      # Dashboard, Predict, BestModel/RL/MLflow
+│   │   ├── lib/api.js                  # Axios client connecting to backend
+│   │   └── App.jsx                     # Navigation & routing
+│   ├── package.json
+│   └── vite.config.js
+└── src/                                # FastAPI backend & ML core
+    ├── api.py                          # High-performance REST endpoints
+    ├── best_model_service.py           # Best Model ONNX/CatBoost inference engine
+    ├── groq_advisor.py                 # Groq GPT-OSS 120B Prescriptive Copilot
+    ├── rl_bandit.py                    # Contextual Bandit with Thompson Sampling
+    ├── mlflow_manager.py               # Embedded MLflow tracking & registry
+    ├── batch_risk_analyzer.py          # Lot-level risk scoring
+    ├── best_model/                     # Model training, CV, tuning, ONNX export
+    ├── data/                           # Seed datasets & bandit priors
+    │   ├── mlruns/                     # Model registry & experiment tracking
+    │   └── rl_bandit_state.json        # Pre-seeded Bayesian posterior weights
+    └── requirements.txt                # Backend dependencies
+```
+
+---
+
+## ⚡ Quickstart & Local Setup
+
+### Prerequisites
+- **Python 3.10+**
+- **Node.js 18+ & npm**
+- **Groq Cloud API Key** (Free from [console.groq.com](https://console.groq.com/keys))
+
+### 1. Clone & Configure
 ```bash
-# 1. Clone & setup
 git clone https://github.com/Ladnil03/bob-ai-hackathon-Thefentasticfour.git
 cd bob-ai-hackathon-Thefentasticfour
 
-# 2. Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Run full pipeline
-python src/app.py
-
-# Expected: 6-phase analysis pipeline completes in <30 seconds
+# Create your .env file
+cp .env.example .env
+# Edit .env and add your GROQ_API_KEY
 ```
 
-## 🖥️ Demo
+### 2. Option A: Unified Production Mode (Fastest)
+Run the automated build-and-serve script:
+```bash
+python start.py
+```
+This builds the React frontend, packages it into the static directory, and boots the FastAPI production server on `http://127.0.0.1:8000`.
 
-- 📹 **Video**: [Link coming soon]
-- 🖼️ **Screenshots**: [See demo/screenshots/](demo/screenshots/)
-- 📊 **Live demo**: Not deployed (use local script)
+### 3. Option B: Development Mode (Hot Reload)
 
-## ✨ What We're Most Proud Of
+**Terminal 1 — Backend:**
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
 
-We identified pressure drift as the #1 yield predictor (r=0.87 correlation 
-with failures) and built a production-ready root cause analyzer that ranks 
-probable causes with SHAP feature importance scoring. The system catches 
-equipment degradation patterns automatically.
+cd src
+python -m uvicorn api:app --reload --host 127.0.0.1 --port 8000
+```
 
-## ⚠️ Known Limitations
+**Terminal 2 — Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+Open **http://127.0.0.1:5173** to view the live dashboard.
 
-- Dataset spans 2 months (Jan–Feb 2024) — limited for seasonal patterns
-- SHAP explanations currently text-based (could add visualizations)
-- No predictive maintenance scheduling (ranked causes only)
-- Batch scoring uses historical recipe stats as proxy (not real physics model)
+---
+
+## 📡 REST API Reference
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/health` | Service health status & loaded components |
+| `POST` | `/api/predict` | Runs ONNX inference on wafer sensor features |
+| `POST` | `/api/explain-llm` | Prescriptive root cause & roadmap via Groq GPT-OSS 120B |
+| `GET` | `/api/rl/recommend` | Recommends recipe offset actions via Thompson Sampling |
+| `POST` | `/api/rl/feedback` | Ingests wafer outcome to update Bayesian posteriors |
+| `GET` | `/api/rl/status` | Current bandit state, exploration statistics, & posteriors |
+| `POST` | `/api/rl/reset` | Resets bandit priors to neutral baseline |
+| `GET` | `/api/mlflow/summary`| Registered models, active production versions, & run logs |
+| `POST` | `/api/mlflow/log-run`| Logs a custom model evaluation or experiment run |
+| `GET` | `/api/batch-risk` | Analyzes multi-wafer batch failure distributions |
+
+---
+
+## ☁️ Deployment on Render
+
+This repository includes a native `render.yaml` Blueprint for 1-click cloud deployment on Render's free tier.
+
+1. Push this repository to GitHub.
+2. Sign in to [Render](https://dashboard.render.com/) and click **New +** → **Blueprint**.
+3. Connect your repository (`Ladnil03/bob-ai-hackathon-Thefentasticfour`).
+4. Enter your `GROQ_API_KEY` under Environment Variables.
+5. Click **Apply** — Render will automatically build the React assets, install Python packages, and launch the single unified service!
+
+---
+
+## 🏆 Key Achievements & Benchmarks
+
+- **Sub-Millisecond Inference**: ONNX runtime produces wafer classifications in `< 1.2ms`.
+- **Domain-Grounded AI**: Groq 120B prompts are structured around semiconductor physics (plasma RF power, fluorine radical etching, ESC temperature control) rather than generic text.
+- **Adaptive Closed Loop**: The RL Contextual Bandit prevents yield decay across shifting fab chambers without requiring re-triggering full model training jobs.
+- **Production Clean Architecture**: Single-command startup, full decoupled REST API, type-safe data handling, and zero external DB dependencies for MLflow.

@@ -13,3 +13,6 @@ fastapi>=0.104.0
 uvicorn>=0.24.0
 python-multipart>=0.0.6
 groq==0.4.1
+
+# Model Registry & Experiment Tracking
+mlflow>=2.10.0

@@ -1,0 +1,24 @@
+# render.yaml — Render Infrastructure as Code
+# Deploys the Semiconductor Yield Optimization app as a single web service
+# See: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: secom-yield-optimizer
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: |
+      pip install -r src/requirements.txt
+      cd frontend && npm ci --prefer-offline && npm run build && cd ..
+      cp -r frontend/dist src/static
+    startCommand: cd src && python -m uvicorn api:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false  # Set manually in Render dashboard
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: NODE_VERSION
+        value: "20.11.0"
+    healthCheckPath: /api/health
+    autoDeploy: true

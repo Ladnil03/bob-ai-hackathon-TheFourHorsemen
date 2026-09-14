@@ -65,15 +65,30 @@ export default function DashboardPage() {
 
   if (!overview) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 gap-4">
-        <AlertTriangle className="w-12 h-12 text-warning" />
-        <p className="text-muted-foreground font-medium">No results yet. Run the pipeline first.</p>
-        <button
-          onClick={() => navigate('/')}
-          className="px-4 py-2 gradient-primary text-white rounded-lg text-sm font-medium"
-        >
-          Go to Upload
-        </button>
+      <div className="flex flex-col items-center justify-center p-12 bg-white rounded-2xl border border-border gap-4 text-center max-w-lg mx-auto mt-12 shadow-sm">
+        <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+          <Layers className="w-6 h-6" />
+        </div>
+        <div className="space-y-1">
+          <h3 className="text-base font-bold text-foreground">Standard Pipeline Not Run Yet</h3>
+          <p className="text-sm text-muted-foreground">
+            The basic analysis pipeline hasn't been triggered, but the <strong>Optuna-Tuned Best Model (SOTA Ensemble)</strong> is already pre-trained and ready to inspect with full cross-validation metrics!
+          </p>
+        </div>
+        <div className="flex gap-3 pt-2">
+          <button
+            onClick={() => navigate('/best-model')}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm"
+          >
+            Explore Best Model (SOTA)
+          </button>
+          <button
+            onClick={() => navigate('/')}
+            className="px-4 py-2 border border-border text-foreground rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors"
+          >
+            Run Standard Pipeline
+          </button>
+        </div>
       </div>
     );
   }

@@ -1,0 +1,191 @@
+{
+  "models": [
+    {
+      "version": 1,
+      "name": "secom-yield-ensemble",
+      "description": "Optuna-tuned 4-way ensemble (CatBoost + LightGBM + XGBoost + TabPFN)",
+      "stage": "Production",
+      "metrics": {
+        "auc_roc": 0.750736,
+        "pr_auc": 0.219228,
+        "f1": 0.30622,
+        "precision": 0.304762,
+        "recall": 0.307692,
+        "accuracy": 0.907466,
+        "threshold": 0.151842
+      },
+      "hyperparams": {
+        "xgb": {
+          "learning_rate": 0.011665854534888656,
+          "max_depth": 3.0,
+          "min_child_weight": 1.2448900267429577,
+          "subsample": 0.5554092869361277,
+          "colsample_bytree": 0.9643683527187269,
+          "gamma": 4.8449314873840965,
+          "reg_alpha": 0.00013809556806972356,
+          "reg_lambda": 9.534363188491614,
+          "max_bin": 488.0,
+          "grow_policy": "lossguide",
+          "scale_pos_weight": 13.547847654057486
+        },
+        "lgbm": {
+          "learning_rate": 0.006364239741271005,
+          "num_leaves": 26.0,
+          "max_depth": 11.0,
+          "min_child_samples": 61.0,
+          "subsample": 0.5609802223463094,
+          "colsample_bytree": 0.6622986281111121,
+          "reg_alpha": 4.5850891661783e-08,
+          "reg_lambda": 0.21303219689676728,
+          "min_sum_hessian_in_leaf": 2.967073269170635,
+          "max_bin": 412.0,
+          "scale_pos_weight": 6.458787464070136
+        },
+        "cat": {
+          "learning_rate": 0.013016334192085796,
+          "depth": 9.0,
+          "l2_leaf_reg": 2.8397757521886,
+          "min_data_in_leaf": 45.0,
+          "subsample": 0.6780929593505676,
+          "colsample_bylevel": 0.735792498331504,
+          "scale_pos_weight": 21.044971385621118
+        }
+      },
+      "feature_count": 446,
+      "ensemble_mode": "blend",
+      "model_path": "D:\\bob_models\\r1\\best_model.pkl",
+      "registered_at": 1789389592.7812634,
+      "registered_at_iso": "2026-09-14T12:39:52Z",
+      "tags": {
+        "framework": "sklearn+catboost+lgbm+xgb+tabpfn",
+        "dataset": "SECOM-UCI",
+        "hackathon": "IBM-Bob-AI-2026"
+      }
+    },
+    {
+      "version": 2,
+      "name": "secom-yield-ensemble",
+      "description": "Optuna-tuned 4-way ensemble (CatBoost + LightGBM + XGBoost + TabPFN)",
+      "stage": "Production",
+      "metrics": {
+        "auc_roc": 0.750736,
+        "pr_auc": 0.219228,
+        "f1": 0.30622,
+        "precision": 0.304762,
+        "recall": 0.307692,
+        "accuracy": 0.907466,
+        "threshold": 0.151842
+      },
+      "hyperparams": {
+        "xgb": {
+          "learning_rate": 0.011665854534888656,
+          "max_depth": 3.0,
+          "min_child_weight": 1.2448900267429577,
+          "subsample": 0.5554092869361277,
+          "colsample_bytree": 0.9643683527187269,
+          "gamma": 4.8449314873840965,
+          "reg_alpha": 0.00013809556806972356,
+          "reg_lambda": 9.534363188491614,
+          "max_bin": 488.0,
+          "grow_policy": "lossguide",
+          "scale_pos_weight": 13.547847654057486
+        },
+        "lgbm": {
+          "learning_rate": 0.006364239741271005,
+          "num_leaves": 26.0,
+          "max_depth": 11.0,
+          "min_child_samples": 61.0,
+          "subsample": 0.5609802223463094,
+          "colsample_bytree": 0.6622986281111121,
+          "reg_alpha": 4.5850891661783e-08,
+          "reg_lambda": 0.21303219689676728,
+          "min_sum_hessian_in_leaf": 2.967073269170635,
+          "max_bin": 412.0,
+          "scale_pos_weight": 6.458787464070136
+        },
+        "cat": {
+          "learning_rate": 0.013016334192085796,
+          "depth": 9.0,
+          "l2_leaf_reg": 2.8397757521886,
+          "min_data_in_leaf": 45.0,
+          "subsample": 0.6780929593505676,
+          "colsample_bylevel": 0.735792498331504,
+          "scale_pos_weight": 21.044971385621118
+        }
+      },
+      "feature_count": 446,
+      "ensemble_mode": "blend",
+      "model_path": "D:\\bob_models\\r1\\best_model.pkl",
+      "registered_at": 1789389637.4805048,
+      "registered_at_iso": "2026-09-14T12:40:37Z",
+      "tags": {
+        "framework": "sklearn+catboost+lgbm+xgb+tabpfn",
+        "dataset": "SECOM-UCI",
+        "hackathon": "IBM-Bob-AI-2026"
+      }
+    }
+  ],
+  "experiments": [],
+  "current_production": {
+    "version": 2,
+    "name": "secom-yield-ensemble",
+    "description": "Optuna-tuned 4-way ensemble (CatBoost + LightGBM + XGBoost + TabPFN)",
+    "stage": "Production",
+    "metrics": {
+      "auc_roc": 0.750736,
+      "pr_auc": 0.219228,
+      "f1": 0.30622,
+      "precision": 0.304762,
+      "recall": 0.307692,
+      "accuracy": 0.907466,
+      "threshold": 0.151842
+    },
+    "hyperparams": {
+      "xgb": {
+        "learning_rate": 0.011665854534888656,
+        "max_depth": 3.0,
+        "min_child_weight": 1.2448900267429577,
+        "subsample": 0.5554092869361277,
+        "colsample_bytree": 0.9643683527187269,
+        "gamma": 4.8449314873840965,
+        "reg_alpha": 0.00013809556806972356,
+        "reg_lambda": 9.534363188491614,
+        "max_bin": 488.0,
+        "grow_policy": "lossguide",
+        "scale_pos_weight": 13.547847654057486
+      },
+      "lgbm": {
+        "learning_rate": 0.006364239741271005,
+        "num_leaves": 26.0,
+        "max_depth": 11.0,
+        "min_child_samples": 61.0,
+        "subsample": 0.5609802223463094,
+        "colsample_bytree": 0.6622986281111121,
+        "reg_alpha": 4.5850891661783e-08,
+        "reg_lambda": 0.21303219689676728,
+        "min_sum_hessian_in_leaf": 2.967073269170635,
+        "max_bin": 412.0,
+        "scale_pos_weight": 6.458787464070136
+      },
+      "cat": {
+        "learning_rate": 0.013016334192085796,
+        "depth": 9.0,
+        "l2_leaf_reg": 2.8397757521886,
+        "min_data_in_leaf": 45.0,
+        "subsample": 0.6780929593505676,
+        "colsample_bylevel": 0.735792498331504,
+        "scale_pos_weight": 21.044971385621118
+      }
+    },
+    "feature_count": 446,
+    "ensemble_mode": "blend",
+    "model_path": "D:\\bob_models\\r1\\best_model.pkl",
+    "registered_at": 1789389637.4805048,
+    "registered_at_iso": "2026-09-14T12:40:37Z",
+    "tags": {
+      "framework": "sklearn+catboost+lgbm+xgb+tabpfn",
+      "dataset": "SECOM-UCI",
+      "hackathon": "IBM-Bob-AI-2026"
+    }
+  }
+}

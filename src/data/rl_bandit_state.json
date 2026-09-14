@@ -1,0 +1,1465 @@
+{
+  "posteriors": {
+    "0": {
+      "rf_power": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          2.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          1.0
+        ],
+        "3": [
+          3.0,
+          1.0
+        ],
+        "4": [
+          2.0,
+          1.0
+        ]
+      },
+      "gas_flow_cf4": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          1.0
+        ],
+        "3": [
+          4.0,
+          1.0
+        ],
+        "4": [
+          2.0,
+          1.0
+        ]
+      },
+      "chamber_pressure": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          4.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          2.0,
+          1.0
+        ]
+      },
+      "susceptor_temp": {
+        "0": [
+          4.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          2.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      },
+      "exposure_dose": {
+        "0": [
+          3.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          2.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          2.0,
+          1.0
+        ]
+      }
+    },
+    "1": {
+      "rf_power": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          2.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      },
+      "gas_flow_cf4": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          2.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      },
+      "chamber_pressure": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          2.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      },
+      "susceptor_temp": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          2.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      },
+      "exposure_dose": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          2.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "2": {
+      "rf_power": {
+        "0": [
+          2.0,
+          1.0
+        ],
+        "1": [
+          2.0,
+          1.0
+        ],
+        "2": [
+          2.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      },
+      "gas_flow_cf4": {
+        "0": [
+          2.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          1.0
+        ],
+        "3": [
+          2.0,
+          1.0
+        ],
+        "4": [
+          2.0,
+          1.0
+        ]
+      },
+      "chamber_pressure": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          2.0,
+          1.0
+        ],
+        "3": [
+          2.0,
+          1.0
+        ],
+        "4": [
+          2.0,
+          1.0
+        ]
+      },
+      "susceptor_temp": {
+        "0": [
+          2.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          2.0,
+          1.0
+        ],
+        "3": [
+          2.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      },
+      "exposure_dose": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          2.0,
+          1.0
+        ],
+        "3": [
+          2.0,
+          1.0
+        ],
+        "4": [
+          2.0,
+          1.0
+        ]
+      }
+    },
+    "3": {
+      "rf_power": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          4.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          3.0,
+          1.0
+        ]
+      },
+      "gas_flow_cf4": {
+        "0": [
+          2.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          5.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      },
+      "chamber_pressure": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          4.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          3.0,
+          1.0
+        ]
+      },
+      "susceptor_temp": {
+        "0": [
+          4.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          1.0
+        ],
+        "3": [
+          2.0,
+          1.0
+        ],
+        "4": [
+          2.0,
+          1.0
+        ]
+      },
+      "exposure_dose": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          2.0,
+          1.0
+        ],
+        "3": [
+          2.0,
+          1.0
+        ],
+        "4": [
+          4.0,
+          1.0
+        ]
+      }
+    },
+    "4": {
+      "rf_power": {
+        "0": [
+          7.0,
+          2.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          1.0
+        ],
+        "3": [
+          2.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          2.0
+        ]
+      },
+      "gas_flow_cf4": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          4.0,
+          2.0
+        ],
+        "2": [
+          4.0,
+          1.0
+        ],
+        "3": [
+          2.0,
+          2.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      },
+      "chamber_pressure": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          4.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          1.0
+        ],
+        "3": [
+          2.0,
+          2.0
+        ],
+        "4": [
+          4.0,
+          2.0
+        ]
+      },
+      "susceptor_temp": {
+        "0": [
+          3.0,
+          1.0
+        ],
+        "1": [
+          2.0,
+          2.0
+        ],
+        "2": [
+          5.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          2.0
+        ]
+      },
+      "exposure_dose": {
+        "0": [
+          2.0,
+          2.0
+        ],
+        "1": [
+          2.0,
+          1.0
+        ],
+        "2": [
+          2.0,
+          2.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          5.0,
+          1.0
+        ]
+      }
+    },
+    "5": {
+      "rf_power": {
+        "0": [
+          1.0,
+          2.0
+        ],
+        "1": [
+          2.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      },
+      "gas_flow_cf4": {
+        "0": [
+          1.0,
+          2.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          2.0,
+          1.0
+        ]
+      },
+      "chamber_pressure": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          2.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          2.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      },
+      "susceptor_temp": {
+        "0": [
+          2.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          2.0
+        ]
+      },
+      "exposure_dose": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          2.0,
+          2.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      }
+    },
+    "6": {
+      "rf_power": {
+        "0": [
+          3.0,
+          2.0
+        ],
+        "1": [
+          8.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          2.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          3.0,
+          1.0
+        ]
+      },
+      "gas_flow_cf4": {
+        "0": [
+          8.0,
+          1.0
+        ],
+        "1": [
+          2.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          2.0
+        ],
+        "3": [
+          4.0,
+          2.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      },
+      "chamber_pressure": {
+        "0": [
+          2.0,
+          1.0
+        ],
+        "1": [
+          5.0,
+          1.0
+        ],
+        "2": [
+          3.0,
+          1.0
+        ],
+        "3": [
+          5.0,
+          2.0
+        ],
+        "4": [
+          1.0,
+          2.0
+        ]
+      },
+      "susceptor_temp": {
+        "0": [
+          3.0,
+          2.0
+        ],
+        "1": [
+          2.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          2.0
+        ],
+        "3": [
+          7.0,
+          1.0
+        ],
+        "4": [
+          3.0,
+          1.0
+        ]
+      },
+      "exposure_dose": {
+        "0": [
+          1.0,
+          1.0
+        ],
+        "1": [
+          2.0,
+          2.0
+        ],
+        "2": [
+          4.0,
+          2.0
+        ],
+        "3": [
+          4.0,
+          1.0
+        ],
+        "4": [
+          5.0,
+          1.0
+        ]
+      }
+    },
+    "7": {
+      "rf_power": {
+        "0": [
+          1.0,
+          2.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          1.0
+        ],
+        "3": [
+          2.0,
+          1.0
+        ],
+        "4": [
+          2.0,
+          1.0
+        ]
+      },
+      "gas_flow_cf4": {
+        "0": [
+          2.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          2.0
+        ],
+        "2": [
+          2.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      },
+      "chamber_pressure": {
+        "0": [
+          2.0,
+          1.0
+        ],
+        "1": [
+          1.0,
+          1.0
+        ],
+        "2": [
+          2.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          2.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      },
+      "susceptor_temp": {
+        "0": [
+          1.0,
+          2.0
+        ],
+        "1": [
+          3.0,
+          1.0
+        ],
+        "2": [
+          1.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      },
+      "exposure_dose": {
+        "0": [
+          2.0,
+          1.0
+        ],
+        "1": [
+          2.0,
+          2.0
+        ],
+        "2": [
+          1.0,
+          1.0
+        ],
+        "3": [
+          1.0,
+          1.0
+        ],
+        "4": [
+          1.0,
+          1.0
+        ]
+      }
+    }
+  },
+  "history": [
+    {
+      "timestamp": 1789389592.76145,
+      "wafer_id": "SIM-0000",
+      "cluster": 6,
+      "actions": {
+        "rf_power": 2,
+        "gas_flow_cf4": 2,
+        "chamber_pressure": 4,
+        "susceptor_temp": 2,
+        "exposure_dose": 1
+      },
+      "reward": 0.0,
+      "update_num": 1
+    },
+    {
+      "timestamp": 1789389592.763554,
+      "wafer_id": "SIM-0001",
+      "cluster": 4,
+      "actions": {
+        "rf_power": 0,
+        "gas_flow_cf4": 1,
+        "chamber_pressure": 4,
+        "susceptor_temp": 2,
+        "exposure_dose": 0
+      },
+      "reward": 1.0,
+      "update_num": 2
+    },
+    {
+      "timestamp": 1789389592.7646132,
+      "wafer_id": "SIM-0002",
+      "cluster": 3,
+      "actions": {
+        "rf_power": 4,
+        "gas_flow_cf4": 2,
+        "chamber_pressure": 1,
+        "susceptor_temp": 0,
+        "exposure_dose": 4
+      },
+      "reward": 1.0,
+      "update_num": 3
+    },
+    {
+      "timestamp": 1789389592.766678,
+      "wafer_id": "SIM-0003",
+      "cluster": 3,
+      "actions": {
+        "rf_power": 4,
+        "gas_flow_cf4": 2,
+        "chamber_pressure": 4,
+        "susceptor_temp": 3,
+        "exposure_dose": 2
+      },
+      "reward": 1.0,
+      "update_num": 4
+    },
+    {
+      "timestamp": 1789389592.768233,
+      "wafer_id": "SIM-0004",
+      "cluster": 4,
+      "actions": {
+        "rf_power": 0,
+        "gas_flow_cf4": 3,
+        "chamber_pressure": 1,
+        "susceptor_temp": 1,
+        "exposure_dose": 2
+      },
+      "reward": 1.0,
+      "update_num": 5
+    },
+    {
+      "timestamp": 1789389592.7692783,
+      "wafer_id": "SIM-0005",
+      "cluster": 6,
+      "actions": {
+        "rf_power": 0,
+        "gas_flow_cf4": 3,
+        "chamber_pressure": 1,
+        "susceptor_temp": 3,
+        "exposure_dose": 1
+      },
+      "reward": 1.0,
+      "update_num": 6
+    },
+    {
+      "timestamp": 1789389592.7708,
+      "wafer_id": "SIM-0006",
+      "cluster": 6,
+      "actions": {
+        "rf_power": 0,
+        "gas_flow_cf4": 3,
+        "chamber_pressure": 3,
+        "susceptor_temp": 0,
+        "exposure_dose": 3
+      },
+      "reward": 1.0,
+      "update_num": 7
+    },
+    {
+      "timestamp": 1789389592.7718017,
+      "wafer_id": "SIM-0007",
+      "cluster": 1,
+      "actions": {
+        "rf_power": 2,
+        "gas_flow_cf4": 2,
+        "chamber_pressure": 1,
+        "susceptor_temp": 2,
+        "exposure_dose": 2
+      },
+      "reward": 1.0,
+      "update_num": 8
+    },
+    {
+      "timestamp": 1789389592.7728012,
+      "wafer_id": "SIM-0008",
+      "cluster": 2,
+      "actions": {
+        "rf_power": 0,
+        "gas_flow_cf4": 4,
+        "chamber_pressure": 4,
+        "susceptor_temp": 0,
+        "exposure_dose": 3
+      },
+      "reward": 1.0,
+      "update_num": 9
+    },
+    {
+      "timestamp": 1789389592.7748008,
+      "wafer_id": "SIM-0009",
+      "cluster": 4,
+      "actions": {
+        "rf_power": 0,
+        "gas_flow_cf4": 2,
+        "chamber_pressure": 3,
+        "susceptor_temp": 0,
+        "exposure_dose": 4
+      },
+      "reward": 1.0,
+      "update_num": 10
+    },
+    {
+      "timestamp": 1789389687.2774167,
+      "wafer_id": "SIM-0000",
+      "cluster": 5,
+      "actions": {
+        "rf_power": 1,
+        "gas_flow_cf4": 4,
+        "chamber_pressure": 2,
+        "susceptor_temp": 0,
+        "exposure_dose": 2
+      },
+      "reward": 1.0,
+      "update_num": 11
+    },
+    {
+      "timestamp": 1789389687.28051,
+      "wafer_id": "SIM-0001",
+      "cluster": 2,
+      "actions": {
+        "rf_power": 1,
+        "gas_flow_cf4": 3,
+        "chamber_pressure": 2,
+        "susceptor_temp": 2,
+        "exposure_dose": 2
+      },
+      "reward": 1.0,
+      "update_num": 12
+    },
+    {
+      "timestamp": 1789389687.2825081,
+      "wafer_id": "SIM-0002",
+      "cluster": 6,
+      "actions": {
+        "rf_power": 1,
+        "gas_flow_cf4": 0,
+        "chamber_pressure": 3,
+        "susceptor_temp": 3,
+        "exposure_dose": 2
+      },
+      "reward": 1.0,
+      "update_num": 13
+    },
+    {
+      "timestamp": 1789389687.2848554,
+      "wafer_id": "SIM-0003",
+      "cluster": 4,
+      "actions": {
+        "rf_power": 0,
+        "gas_flow_cf4": 1,
+        "chamber_pressure": 4,
+        "susceptor_temp": 2,
+        "exposure_dose": 4
+      },
+      "reward": 1.0,
+      "update_num": 14
+    },
+    {
+      "timestamp": 1789389687.2878559,
+      "wafer_id": "SIM-0004",
+      "cluster": 6,
+      "actions": {
+        "rf_power": 1,
+        "gas_flow_cf4": 3,
+        "chamber_pressure": 3,
+        "susceptor_temp": 4,
+        "exposure_dose": 2
+      },
+      "reward": 1.0,
+      "update_num": 15
+    },
+    {
+      "timestamp": 1789389687.2898548,
+      "wafer_id": "SIM-0005",
+      "cluster": 6,
+      "actions": {
+        "rf_power": 1,
+        "gas_flow_cf4": 0,
+        "chamber_pressure": 0,
+        "susceptor_temp": 3,
+        "exposure_dose": 3
+      },
+      "reward": 1.0,
+      "update_num": 16
+    },
+    {
+      "timestamp": 1789389687.2930229,
+      "wafer_id": "SIM-0006",
+      "cluster": 3,
+      "actions": {
+        "rf_power": 1,
+        "gas_flow_cf4": 2,
+        "chamber_pressure": 1,
+        "susceptor_temp": 0,
+        "exposure_dose": 3
+      },
+      "reward": 1.0,
+      "update_num": 17
+    },
+    {
+      "timestamp": 1789389687.2950306,
+      "wafer_id": "SIM-0007",
+      "cluster": 4,
+      "actions": {
+        "rf_power": 0,
+        "gas_flow_cf4": 2,
+        "chamber_pressure": 4,
+        "susceptor_temp": 2,
+        "exposure_dose": 4
+      },
+      "reward": 1.0,
+      "update_num": 18
+    },
+    {
+      "timestamp": 1789389687.298031,
+      "wafer_id": "SIM-0008",
+      "cluster": 4,
+      "actions": {
+        "rf_power": 4,
+        "gas_flow_cf4": 3,
+        "chamber_pressure": 3,
+        "susceptor_temp": 4,
+        "exposure_dose": 2
+      },
+      "reward": 0.0,
+      "update_num": 19
+    },
+    {
+      "timestamp": 1789389687.30003,
+      "wafer_id": "SIM-0009",
+      "cluster": 3,
+      "actions": {
+        "rf_power": 1,
+        "gas_flow_cf4": 2,
+        "chamber_pressure": 4,
+        "susceptor_temp": 0,
+        "exposure_dose": 4
+      },
+      "reward": 1.0,
+      "update_num": 20
+    },
+    {
+      "timestamp": 1789389687.3030312,
+      "wafer_id": "SIM-0010",
+      "cluster": 6,
+      "actions": {
+        "rf_power": 1,
+        "gas_flow_cf4": 0,
+        "chamber_pressure": 1,
+        "susceptor_temp": 3,
+        "exposure_dose": 4
+      },
+      "reward": 1.0,
+      "update_num": 21
+    },
+    {
+      "timestamp": 1789389687.3061407,
+      "wafer_id": "SIM-0011",
+      "cluster": 6,
+      "actions": {
+        "rf_power": 4,
+        "gas_flow_cf4": 0,
+        "chamber_pressure": 1,
+        "susceptor_temp": 3,
+        "exposure_dose": 3
+      },
+      "reward": 1.0,
+      "update_num": 22
+    },
+    {
+      "timestamp": 1789389687.308154,
+      "wafer_id": "SIM-0012",
+      "cluster": 4,
+      "actions": {
+        "rf_power": 0,
+        "gas_flow_cf4": 1,
+        "chamber_pressure": 4,
+        "susceptor_temp": 1,
+        "exposure_dose": 0
+      },
+      "reward": 0.0,
+      "update_num": 23
+    },
+    {
+      "timestamp": 1789389687.3111546,
+      "wafer_id": "SIM-0013",
+      "cluster": 7,
+      "actions": {
+        "rf_power": 0,
+        "gas_flow_cf4": 1,
+        "chamber_pressure": 3,
+        "susceptor_temp": 0,
+        "exposure_dose": 1
+      },
+      "reward": 0.0,
+      "update_num": 24
+    },
+    {
+      "timestamp": 1789389687.3131542,
+      "wafer_id": "SIM-0014",
+      "cluster": 5,
+      "actions": {
+        "rf_power": 0,
+        "gas_flow_cf4": 0,
+        "chamber_pressure": 3,
+        "susceptor_temp": 4,
+        "exposure_dose": 2
+      },
+      "reward": 0.0,
+      "update_num": 25
+    },
+    {
+      "timestamp": 1789389687.3161628,
+      "wafer_id": "SIM-0015",
+      "cluster": 0,
+      "actions": {
+        "rf_power": 1,
+        "gas_flow_cf4": 3,
+        "chamber_pressure": 2,
+        "susceptor_temp": 0,
+        "exposure_dose": 0
+      },
+      "reward": 1.0,
+      "update_num": 26
+    },
+    {
+      "timestamp": 1789389687.3191636,
+      "wafer_id": "SIM-0016",
+      "cluster": 0,
+      "actions": {
+        "rf_power": 3,
+        "gas_flow_cf4": 3,
+        "chamber_pressure": 2,
+        "susceptor_temp": 0,
+        "exposure_dose": 0
+      },
+      "reward": 1.0,
+      "update_num": 27
+    },
+    {
+      "timestamp": 1789389687.321176,
+      "wafer_id": "SIM-0017",
+      "cluster": 7,
+      "actions": {
+        "rf_power": 3,
+        "gas_flow_cf4": 0,
+        "chamber_pressure": 0,
+        "susceptor_temp": 1,
+        "exposure_dose": 0
+      },
+      "reward": 1.0,
+      "update_num": 28
+    },
+    {
+      "timestamp": 1789389687.3235145,
+      "wafer_id": "SIM-0018",
+      "cluster": 3,
+      "actions": {
+        "rf_power": 1,
+        "gas_flow_cf4": 0,
+        "chamber_pressure": 1,
+        "susceptor_temp": 4,
+        "exposure_dose": 4
+      },
+      "reward": 1.0,
+      "update_num": 29
+    },
+    {
+      "timestamp": 1789389687.3266363,
+      "wafer_id": "SIM-0019",
+      "cluster": 2,
+      "actions": {
+        "rf_power": 2,
+        "gas_flow_cf4": 0,
+        "chamber_pressure": 3,
+        "susceptor_temp": 3,
+        "exposure_dose": 4
+      },
+      "reward": 1.0,
+      "update_num": 30
+    },
+    {
+      "timestamp": 1789389687.3296456,
+      "wafer_id": "SIM-0020",
+      "cluster": 4,
+      "actions": {
+        "rf_power": 0,
+        "gas_flow_cf4": 1,
+        "chamber_pressure": 1,
+        "susceptor_temp": 2,
+        "exposure_dose": 1
+      },
+      "reward": 1.0,
+      "update_num": 31
+    },
+    {
+      "timestamp": 1789389687.3327198,
+      "wafer_id": "SIM-0021",
+      "cluster": 7,
+      "actions": {
+        "rf_power": 4,
+        "gas_flow_cf4": 2,
+        "chamber_pressure": 2,
+        "susceptor_temp": 1,
+        "exposure_dose": 1
+      },
+      "reward": 1.0,
+      "update_num": 32
+    },
+    {
+      "timestamp": 1789389687.335717,
+      "wafer_id": "SIM-0022",
+      "cluster": 4,
+      "actions": {
+        "rf_power": 3,
+        "gas_flow_cf4": 2,
+        "chamber_pressure": 1,
+        "susceptor_temp": 0,
+        "exposure_dose": 4
+      },
+      "reward": 1.0,
+      "update_num": 33
+    },
+    {
+      "timestamp": 1789389687.337725,
+      "wafer_id": "SIM-0023",
+      "cluster": 6,
+      "actions": {
+        "rf_power": 1,
+        "gas_flow_cf4": 1,
+        "chamber_pressure": 1,
+        "susceptor_temp": 4,
+        "exposure_dose": 4
+      },
+      "reward": 1.0,
+      "update_num": 34
+    },
+    {
+      "timestamp": 1789389687.3407345,
+      "wafer_id": "SIM-0024",
+      "cluster": 0,
+      "actions": {
+        "rf_power": 3,
+        "gas_flow_cf4": 3,
+        "chamber_pressure": 2,
+        "susceptor_temp": 0,
+        "exposure_dose": 2
+      },
+      "reward": 1.0,
+      "update_num": 35
+    },
+    {
+      "timestamp": 1789389687.3437433,
+      "wafer_id": "SIM-0025",
+      "cluster": 6,
+      "actions": {
+        "rf_power": 1,
+        "gas_flow_cf4": 0,
+        "chamber_pressure": 3,
+        "susceptor_temp": 3,
+        "exposure_dose": 2
+      },
+      "reward": 1.0,
+      "update_num": 36
+    },
+    {
+      "timestamp": 1789389687.3469312,
+      "wafer_id": "SIM-0026",
+      "cluster": 0,
+      "actions": {
+        "rf_power": 4,
+        "gas_flow_cf4": 4,
+        "chamber_pressure": 4,
+        "susceptor_temp": 2,
+        "exposure_dose": 4
+      },
+      "reward": 1.0,
+      "update_num": 37
+    },
+    {
+      "timestamp": 1789389687.348997,
+      "wafer_id": "SIM-0027",
+      "cluster": 6,
+      "actions": {
+        "rf_power": 1,
+        "gas_flow_cf4": 0,
+        "chamber_pressure": 2,
+        "susceptor_temp": 0,
+        "exposure_dose": 4
+      },
+      "reward": 1.0,
+      "update_num": 38
+    },
+    {
+      "timestamp": 1789389687.3519971,
+      "wafer_id": "SIM-0028",
+      "cluster": 6,
+      "actions": {
+        "rf_power": 0,
+        "gas_flow_cf4": 3,
+        "chamber_pressure": 3,
+        "susceptor_temp": 0,
+        "exposure_dose": 2
+      },
+      "reward": 0.0,
+      "update_num": 39
+    },
+    {
+      "timestamp": 1789389687.3550017,
+      "wafer_id": "SIM-0029",
+      "cluster": 6,
+      "actions": {
+        "rf_power": 4,
+        "gas_flow_cf4": 0,
+        "chamber_pressure": 2,
+        "susceptor_temp": 1,
+        "exposure_dose": 4
+      },
+      "reward": 1.0,
+      "update_num": 40
+    }
+  ],
+  "total_updates": 40,
+  "created_at": 1789389543.5798829,
+  "last_updated": 1789389687.3550017
+}

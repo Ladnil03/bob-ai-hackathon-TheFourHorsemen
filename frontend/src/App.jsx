@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { UploadCloud, LayoutDashboard, BarChart3, Target, Info, Menu, X, Cpu } from 'lucide-react';
+import { UploadCloud, LayoutDashboard, BarChart3, Target, Info, Menu, X, Cpu, Award } from 'lucide-react';
 import UploadPage from './pages/UploadPage';
 import DashboardPage from './pages/DashboardPage';
 import AnalysisPage from './pages/AnalysisPage';
 import PredictPage from './pages/PredictPage';
+import BestModelPage from './pages/BestModelPage';
 import './index.css';
 
 const navItems = [
   { to: '/', icon: UploadCloud, label: 'Upload & Load' },
+  { to: '/best-model', icon: Award, label: 'Best Model (SOTA)' },
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/analysis', icon: BarChart3, label: 'Analysis' },
   { to: '/predict', icon: Target, label: 'Predict' },
@@ -86,6 +88,7 @@ export default function App() {
           <main className="flex-1 overflow-y-auto p-6 bg-background">
             <Routes>
               <Route path="/" element={<UploadPage />} />
+              <Route path="/best-model" element={<BestModelPage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/analysis" element={<AnalysisPage />} />
               <Route path="/predict" element={<PredictPage />} />

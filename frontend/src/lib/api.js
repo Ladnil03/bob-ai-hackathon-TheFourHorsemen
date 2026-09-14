@@ -34,4 +34,28 @@ export const getFeatureSelection = () => api.get('/results/feature-selection');
 // Predict
 export const predictSample = (sample) => api.post('/predict', sample);
 
+// Best Model (SOTA Ensemble)
+export const getBestModelStatus = () => api.get('/best-model/status');
+export const getBestModelMetrics = () => api.get('/best-model/metrics');
+export const getBestModelSampleWafers = () => api.get('/best-model/sample-wafers');
+export const predictBestModel = (features, threshold = null) =>
+  api.post('/best-model/predict', { features, threshold });
+export const batchPredictBestModel = (threshold = null) =>
+  api.post(`/best-model/batch-predict${threshold !== null ? `?threshold=${threshold}` : ''}`);
+export const getCurvesUrl = () => '/api/best-model/curves';
+export const prescribeBestModel = (payload) => api.post('/best-model/prescribe', payload);
+export const batchPreflightBestModel = (params = {}) => api.post('/best-model/batch-preflight', null, { params });
+
+// Reinforcement Learning — Contextual Bandit
+export const rlSuggestRecipe = (context = []) => api.post('/rl/suggest-recipe-offset', { context });
+export const rlRecordOutcome = (payload) => api.post('/rl/record-outcome', payload);
+export const rlPolicyDashboard = () => api.get('/rl/policy-dashboard');
+export const rlSimulateBatch = (n = 20) => api.post(`/rl/simulate-batch?n_samples=${n}`);
+
+// MLflow Model Registry
+export const mlflowRegisterCurrent = () => api.post('/mlflow/register-current');
+export const mlflowModelVersions = () => api.get('/mlflow/model-versions');
+export const mlflowPromote = (version, stage = 'Production') => api.post('/mlflow/promote', { version, stage });
+export const mlflowExperiments = () => api.get('/mlflow/experiments');
+
 export default api;
