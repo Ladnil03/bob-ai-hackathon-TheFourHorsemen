@@ -1,11 +1,5 @@
-https://secom-yield-optimizer.onrender.com/
+## 🌐 Live / Deployed Demo
 
-Replace the URL above with a link to your live/deployed demo.
+**Demo URL:** https://secom-yield-optimizer.onrender.com/
 
-If your project is not deployed, delete this line and write:
-  NOT DEPLOYED — run locally using docs/setup-guide.md
-
-Accepted options:
-  - A public URL (Vercel, Render, IBM Cloud, Railway, etc.)
-  - A localhost URL with note that it requires local setup
-  - "NOT DEPLOYED" — judges will run it locally using your setup guide
+The SemiYield AI application is publicly deployed and can be accessed directly through the link above.
