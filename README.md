@@ -12,17 +12,43 @@
 > Built for the **IBM Bob AI Hackathon** by **Thefentasticfour**.
 
 ---
+**Team Name:** **The Four Horsemen**
+---
 
 ## 👥 Team
 
-| Field | Details |
-|---|---|
-| **Team Name** | **Thefentasticfour** |
-| **Track** | AI / Semiconductor Optimization |
-| **Members** | Manan Panchal, Tirth Bhanderi, Bhakti Ruparel, Nil Lad |
+### Tirth Bhanderi(Lead)
+**Frontend Engineering + ML Integration**
+
+- Frontend architecture and UI
+- Model execution pipeline
+- Model serving integration
+- Product experience
+  
+### Manan Panchal
+**ML Engineering + Model Evaluation**
+
+- Model building
+- Model training
+- Model evaluation
+- ML pipeline
+  
+### Nil Lad
+**DevOps + Data Engineering**
+
+- DevOps / deployment
+- Infrastructure
+- Data engineering
+- Data support for model development
+
+### Bhakti Ruparel
+**Frontend Engineering**
+
+- Frontend development
+- UI/UX implementation
+- Product interface
 
 ---
-
 ## 🎯 Problem Statement & Business Impact
 
 In advanced semiconductor nodes (3nm/5nm/7nm), a **1% yield loss represents $50M–$100M per month** in lost fab revenue. Modern fabs produce wafers through hundreds of sequential stages (photolithography, plasma etching, chemical vapor deposition, CMP, ion implantation) monitored by thousands of real-time sensors.
