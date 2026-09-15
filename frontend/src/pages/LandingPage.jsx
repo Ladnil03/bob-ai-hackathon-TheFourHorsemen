@@ -1,13 +1,14 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
+import React, { useRef, useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import { motion, useScroll } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Code, Activity, Cpu, BrainCircuit, LineChart, BarChart2, ChevronRight } from 'lucide-react';
 import BrandLogo from '@/components/BrandLogo';
-import SemiconductorVisualizer from '@/components/SemiconductorVisualizer';
+
+const Semiconductor3D = lazy(() => import('@/components/Semiconductor3D'));
 
 /* ─────────────────────────────────────────────────────────────
    LIGHT THEME LANDING PAGE
-   No 3D Models on right side — Powered by interactive SVG telemetry.
+   3D Semiconductor chip on right side — constructs/deconstructs on scroll.
    ───────────────────────────────────────────────────────────── */
 
 export default function LandingPage() {
@@ -68,7 +69,7 @@ export default function LandingPage() {
         <div className="sticky top-0 h-screen w-full flex overflow-hidden">
 
           {/* LEFT: Interactive Story Panels */}
-          <div className="w-full md:w-[48%] lg:w-[45%] h-full flex items-center relative z-10 px-6 md:px-12 lg:px-16 pt-16">
+          <div className="w-full md:w-[42%] lg:w-[40%] h-full flex items-center relative z-10 px-6 md:px-10 lg:px-14 pt-16">
             <div className="relative w-full max-w-lg">
 
               {/* SECTION 0: HERO */}
@@ -202,9 +203,22 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* RIGHT: High-tech SVG Semiconductor Visualizer (No 3D Models) */}
-          <div className="hidden md:block md:w-[52%] lg:w-[55%] h-full relative">
-            <SemiconductorVisualizer section={section} />
+          {/* RIGHT: 3D Semiconductor Chip — Constructs/Deconstructs on Scroll */}
+          <div className="hidden md:block md:w-[58%] lg:w-[60%] h-full relative">
+            {/* Subtle radial gradient background behind 3D scene */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50/40 via-transparent to-slate-100/50 pointer-events-none" />
+            <div 
+              className="absolute inset-0 pointer-events-none opacity-[0.03]"
+              style={{ backgroundImage: 'radial-gradient(circle, #3b82f6 1px, transparent 1px)', backgroundSize: '24px 24px' }}
+            />
+            <Suspense fallback={
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="w-10 h-10 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+                <span className="ml-3 text-xs text-slate-500 font-medium">Loading 3D Model…</span>
+              </div>
+            }>
+              <Semiconductor3D progress={progress} />
+            </Suspense>
 
             {/* Section Progress Navigation Bar */}
             <div className="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-20">
@@ -219,9 +233,11 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Mobile: Fallback Visualizer */}
+          {/* Mobile: Fallback 3D */}
           <div className="md:hidden absolute bottom-0 left-0 right-0 h-[35vh] opacity-60 pointer-events-none">
-            <SemiconductorVisualizer section={section} />
+            <Suspense fallback={null}>
+              <Semiconductor3D progress={progress} />
+            </Suspense>
           </div>
 
         </div>
