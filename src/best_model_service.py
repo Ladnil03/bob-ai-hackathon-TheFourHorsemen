@@ -123,19 +123,22 @@ class BestModelService:
             self.reference_std = np.nanstd(X_raw, axis=0)
             self.reference_std[self.reference_std < 1e-6] = 1.0
 
-            # Pre-extract demo wafers for instant 1-click testing
-            # Sample 2 is a known defect (y=1)
-            # Sample 0 and 1 are normal passes (y=0)
-            # Sample 14 is a marginal / borderline case
+            # Pre-extract demo wafers for instant 1-click testing.
+            # Sample indices refer to the time-sorted SECOM rows used by the model.
+            # Sample 2 is a known defect (y=1); samples 0 and 1 are passes (y=0);
+            # sample 14 is a marginal / borderline case (y=1 in SECOM).
+            # actual_status is always derived from the real label to stay in sync.
             demo_indices = [
-                (2, "Wafer #003 - Confirmed Defect", "FAIL", "Critical yield fallout wafer flagged with anomalous sensor drift"),
-                (0, "Wafer #001 - Standard High-Yield Pass", "PASS", "Typical clean production wafer with in-spec sensors"),
-                (1, "Wafer #002 - Nominal Pass", "PASS", "Within tight operational limits across all sensor stages"),
-                (14, "Wafer #015 - Borderline Pass", "PASS", "Marginal process variation near threshold boundary"),
+                (2, "Wafer #003 - Confirmed Defect", "Critical yield fallout wafer flagged with anomalous sensor drift"),
+                (0, "Wafer #001 - Standard High-Yield Pass", "Typical clean production wafer with in-spec sensors"),
+                (1, "Wafer #002 - Nominal Pass", "Within tight operational limits across all sensor stages"),
+                (14, "Wafer #015 - Borderline Defect", "Marginal process variation near threshold boundary"),
             ]
 
-            for idx, label, actual_status, note in demo_indices:
+            for idx, label, note in demo_indices:
                 if idx < len(data.y):
+                    actual_label = int(data.y[idx])
+                    actual_status = "FAIL" if actual_label == 1 else "PASS"
                     row_vals = X_raw[idx]
                     sample_dict = {
                         self.feature_names[j]: (round(float(row_vals[j]), 4) if not np.isnan(row_vals[j]) else None)
@@ -146,7 +149,7 @@ class BestModelService:
                     self.demo_wafers.append({
                         "id": f"sample_{idx}",
                         "name": label,
-                        "actual_label": int(data.y[idx]),
+                        "actual_label": actual_label,
                         "actual_status": actual_status,
                         "description": note,
                         "sample_index": idx,
@@ -199,11 +202,17 @@ class BestModelService:
             "is_winner": True,
         })
 
+        # Serve the threshold from the loaded model so the UI can never drift
+        # from the artifact that actually produces predictions.
+        served_threshold = getattr(self.model, "threshold", None)
+        if served_threshold is None:
+            served_threshold = self.metrics.get("threshold", 0.151842)
+
         return {
             "status": "ready" if self.is_ready else "not_loaded",
             "artifact_dir": str(self.artifact_dir),
             "ensemble_mode": self.metrics.get("ensemble_mode", "blend"),
-            "threshold": self.metrics.get("threshold", 0.151842),
+            "threshold": float(served_threshold),
             "final_metrics": final_m,
             "pr_auc_gain_pct": pr_lift,
             "random_guess_pr": 0.0664,
