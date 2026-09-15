@@ -1,1 +1,0 @@
-import{D as e}from"./index-DIN70LeO.js";var t={name:`arrow-up-right`,size:24,node:[[`path`,{d:`M7 7h10v10`,key:`1tivn9`}],[`path`,{d:`M7 17 17 7`,key:`1vkiza`}]]};t.node;var n=e(t),r={name:`chevron-right`,size:24,node:[[`path`,{d:`m9 18 6-6-6-6`,key:`mthhwq`}]]};r.node;var i=e(r);export{n,i as t};
