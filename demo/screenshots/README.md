@@ -63,10 +63,9 @@ Ranked root causes for a specific failed sample, comparing sensor values against
 Full-page wafer scoring view with raw sensor JSON input, classification threshold control, defect probability, and contributing sensor deviations.
 
 
+# 🚀 SemiYield AI
 
-# 🚀 [Your Project Title Here]
-
-> ⚠️ **Replace everything in `[ ]` brackets with your actual content before submission.**
+> **AI-Powered Semiconductor Wafer Yield Optimization & Root Cause Analysis**
 
 ---
 
@@ -74,10 +73,9 @@ Full-page wafer scoring view with raw sensor JSON input, classification threshol
 
 | Field | Value |
 |---|---|
-| **Team Name** | [Your Team Name] |
-| **Track** | [AI / DevOps / Sustainability / Open] |
-| **Team Lead** | [Name] — [email@ibm.com] |
-| **Members** | [Name 1], [Name 2], [Name 3] |
+| **Team Name** | **The Four Horsemen** |
+| **Track** | **AI / Semiconductor Optimization** |
+| **Team Lead** | **Tirth Bhanderi** |
+| **Members** | **Tirth Bhanderi, Bhakti Ruparel, Manan Panchal, Nil Lad** |
 
 ---
-
