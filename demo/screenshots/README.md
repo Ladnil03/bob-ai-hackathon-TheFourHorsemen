@@ -76,6 +76,6 @@ Full-page wafer scoring view with raw sensor JSON input, classification threshol
 | **Team Name** | **The Four Horsemen** |
 | **Track** | **AI / Semiconductor Optimization** |
 | **Team Lead** | **Tirth Bhanderi** |
-| **Members** | **Tirth Bhanderi, Bhakti Ruparel, Manan Panchal, Nil Lad** |
+| **Members** | **Tirth Bhanderi, Manan Panchal, Nil Lad, Bhakti Ruparel** |
 
 ---
